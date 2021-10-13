@@ -26,6 +26,8 @@ public class Combat : MonoBehaviour
 
     public void Attack()
     {
+
+        Debug.Log("Calling attack");
         // Detect enemies that are gonna die
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
@@ -33,6 +35,7 @@ public class Combat : MonoBehaviour
         foreach(Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+            Debug.Log("sending damage");
         }
     }   
 
