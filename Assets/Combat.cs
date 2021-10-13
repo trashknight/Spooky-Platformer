@@ -18,15 +18,14 @@ public class Combat : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            Attack();
+            // Play an attack animation yass kween you go gurl
+            animator.SetTrigger("Sexy Attack 69");
+            // the animation will call attack()
         }
     }
 
-    void Attack()
+    public void Attack()
     {
-        // Play an attack animation yass kween you go gurl
-        animator.SetTrigger("Sexy Attack 69");
-
         // Detect enemies that are gonna die
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
