@@ -20,7 +20,9 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
-            var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
+            //var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
+            // i want this FALSE so that u cant jump on the him
+            var willHurtEnemy = false;
 
             if (willHurtEnemy)
             {
