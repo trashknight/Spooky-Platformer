@@ -13,14 +13,21 @@ public class Combat : MonoBehaviour
 
     public int attackDamage = 1;
 
+    public float attackRate = 2f;
+    float nextattackTime =0f;
+
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Time.time >= nextattackTime)
         {
-            // Play an attack animation yass kween you go gurl
-            animator.SetTrigger("Sexy Attack 69");
-            // the animation will call attack()
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                // Play an attack animation yass kween you go gurl
+                animator.SetTrigger("Sexy Attack 69");
+                // the animation will call attack()
+                nextattackTime = Time.time + 1f / attackRate;
+            }
         }
     }
 
