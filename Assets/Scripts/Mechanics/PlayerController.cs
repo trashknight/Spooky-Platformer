@@ -14,6 +14,7 @@ namespace Platformer.Mechanics
     /// </summary>
     public class PlayerController : KinematicObject
     {
+        
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
@@ -41,6 +42,7 @@ namespace Platformer.Mechanics
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
+        Combat combat;
 
         void Awake()
         {
@@ -49,6 +51,7 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+            combat = GetComponent<Combat>();
         }
 
         protected override void Update()
@@ -56,9 +59,9 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                if (jumpState == JumpState.Grounded && Input.GetKeyDown(KeyCode.W))
                     jumpState = JumpState.PrepareToJump;
-                else if (Input.GetButtonUp("Jump"))
+                else if (Input.GetKeyUp(KeyCode.W))
                 {
                     stopJump = true;
                     Schedule<PlayerStopJump>().player = this;
@@ -70,6 +73,20 @@ namespace Platformer.Mechanics
             }
             UpdateJumpState();
             base.Update();
+        }
+
+        void UpdateFacingDirection()
+        {
+            if (move.x > 0.01f) {
+                spriteRenderer.flipX = false;
+                combat.facingRight = true;
+            }
+
+            else if (move.x < -0.01f) {
+                spriteRenderer.flipX = true;
+                combat.facingRight = false;
+            }
+
         }
 
         void UpdateJumpState()
@@ -118,10 +135,7 @@ namespace Platformer.Mechanics
                 }
             }
 
-            if (move.x > 0.01f)
-                spriteRenderer.flipX = false;
-            else if (move.x < -0.01f)
-                spriteRenderer.flipX = true;
+            UpdateFacingDirection();
 
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);

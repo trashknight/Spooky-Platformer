@@ -7,7 +7,8 @@ public class Combat : MonoBehaviour
 
     public Animator animator;
 
-    public Transform attackPoint;
+    public Transform attackPointR;
+    public Transform attackPointL;
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
 
@@ -15,13 +16,15 @@ public class Combat : MonoBehaviour
 
     public float attackRate = 2f;
     float nextattackTime =0f;
+    public bool attackEnabled = true;
+    public bool facingRight = true;
 
     // Update is called once per frame
     void Update()
     {
         if (Time.time >= nextattackTime)
         {
-            if (Input.GetKeyDown(KeyCode.S))
+            if ((Input.GetKeyDown(KeyCode.Space)) && attackEnabled)
             {
                 // Play an attack animation yass kween you go gurl
                 animator.SetTrigger("Sexy Attack 69");
@@ -36,7 +39,13 @@ public class Combat : MonoBehaviour
 
         Debug.Log("Calling attack");
         // Detect enemies that are gonna die
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        Collider2D[] hitEnemies;
+        if (facingRight) {
+            hitEnemies = Physics2D.OverlapCircleAll(attackPointR.position, attackRange, enemyLayers);
+        }
+        else {
+            hitEnemies = Physics2D.OverlapCircleAll(attackPointL.position, attackRange, enemyLayers);
+        }
 
         // Damage those baddies
         foreach(Collider2D enemy in hitEnemies)
@@ -48,10 +57,11 @@ public class Combat : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
+        if ((attackPointR == null) || (attackPointL == null))
         return;
     
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointR.position, attackRange);
+        Gizmos.DrawWireSphere(attackPointL.position, attackRange);
     }
 }
     

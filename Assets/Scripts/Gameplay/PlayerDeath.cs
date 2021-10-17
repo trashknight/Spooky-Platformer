@@ -12,10 +12,13 @@ namespace Platformer.Gameplay
     /// <typeparam name="PlayerDeath"></typeparam>
     public class PlayerDeath : Simulation.Event<PlayerDeath>
     {
+        
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        Combat combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
 
         public override void Execute()
         {
+            combat.attackEnabled = false;
             var player = model.player;
             if (player.health.IsAlive)
             {

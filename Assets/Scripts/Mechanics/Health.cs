@@ -15,10 +15,15 @@ namespace Platformer.Mechanics
         /// </summary>
         public int maxHP = 1;
 
+        public GameObject respawnVFX;
+        public float respawnDuration = 2f;
+        public Transform respawnTransform;
+
         /// <summary>
         /// Indicates if the entity should be considered 'alive'.
         /// </summary>
         public bool IsAlive => currentHP > 0;
+
 
         int currentHP;
 
@@ -55,6 +60,11 @@ namespace Platformer.Mechanics
         void Awake()
         {
             currentHP = maxHP;
+        }
+
+        void MakeRespawnVFX () {
+            GameObject respawn = Instantiate(respawnVFX, respawnTransform.position, respawnTransform.rotation);
+            Destroy(respawn, respawnDuration);
         }
     }
 }
