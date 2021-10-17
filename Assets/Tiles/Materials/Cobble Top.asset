@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Topgrass
+  m_Name: Cobble Top
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1807125615787039003, guid: 77056ad8a3c43d24d95cf824b2619ebd,
+  m_Sprite: {fileID: 8583907045637443153, guid: 3e193c76b94aec145941f07e5424c060,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
