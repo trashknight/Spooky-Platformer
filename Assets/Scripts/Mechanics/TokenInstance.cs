@@ -54,9 +54,11 @@ namespace Platformer.Mechanics
             if (controller != null)
                 collected = true;
             //send an event into the gameplay system to perform some behaviour.
-            var ev = Schedule<PlayerTokenCollision>();
-            ev.token = this;
-            ev.player = player;
+            // var ev = Schedule<PlayerTokenCollision>();
+            // ev.token = this;
+            // ev.player = player;
+            AudioSource.PlayClipAtPoint(tokenCollectAudio, transform.position);
+            Destroy(gameObject);
         }
     }
 }
