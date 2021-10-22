@@ -59,7 +59,7 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (jumpState == JumpState.Grounded && Input.GetKeyDown(KeyCode.W))
+                if (jumpState == JumpState.Grounded && Input.GetKey(KeyCode.W))
                     jumpState = JumpState.PrepareToJump;
                 else if (Input.GetKeyUp(KeyCode.W))
                 {
