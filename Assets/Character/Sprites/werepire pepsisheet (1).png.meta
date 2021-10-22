@@ -1,39 +1,42 @@
 fileFormatVersion: 2
-guid: a441bee8157c71b48abddbdda8ab6f40
+guid: 869a197dd65dedd44bf4310c256d4eb0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5778912662018453821
+      213: -7209387543971824202
     second: Idle
   - first:
-      213: 8246907735873584723
+      213: -1642524980224105954
     second: Ouch
   - first:
-      213: -6679290214372585709
+      213: -2488910016918895124
     second: Respawn
   - first:
-      213: -4802307280646510945
-    second: Walk 1
+      213: 6564195916101263100
+    second: Blink
   - first:
-      213: 4616737800388226562
-    second: Walk 2
+      213: -3692696176096619664
+    second: Run 1
   - first:
-      213: -7577576555784930222
-    second: Walk 3
+      213: -8610471072000129151
+    second: Run 2
   - first:
-      213: 2253518916923429291
-    second: Walk 4
+      213: -8414765317713868015
+    second: Run 3
   - first:
-      213: -487934987482643027
+      213: 5560288894015829138
+    second: Run 4
+  - first:
+      213: 2509791995081222343
     second: Bite 1
   - first:
-      213: -6863097522212630703
+      213: -7900798712045808000
     second: Bite 2
   - first:
-      213: -4126486025741484833
+      213: 7530744329511810347
     second: Jump 1
   - first:
-      213: -8905038798732248845
+      213: -3558882124408715388
     second: Jump 2
   externalObjects: {}
   serializedVersion: 11
@@ -127,72 +130,9 @@ TextureImporter:
       name: Idle
       rect:
         serializedVersion: 2
-        x: 14
-        y: 409
-        width: 125
-        height: 155
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3ce02684d8d2dcfa0800000000000000
-      internalID: -5778912662018453821
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Ouch
-      rect:
-        serializedVersion: 2
-        x: 174
-        y: 400
-        width: 153
-        height: 160
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 35e7a2c44e6e27270800000000000000
-      internalID: 8246907735873584723
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Respawn
-      rect:
-        serializedVersion: 2
-        x: 336
-        y: 413
-        width: 118
-        height: 179
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 31f449c30f46e43a0800000000000000
-      internalID: -6679290214372585709
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Walk 1
-      rect:
-        serializedVersion: 2
-        x: 13
-        y: 227
-        width: 129
+        x: 18
+        y: 418
+        width: 123
         height: 153
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -201,20 +141,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f96eac2d8f6ca5db0800000000000000
-      internalID: -4802307280646510945
+      spriteID: 6bdfe69c93c13fb90800000000000000
+      internalID: -7209387543971824202
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk 2
+      name: Ouch
       rect:
         serializedVersion: 2
-        x: 163
-        y: 229
-        width: 131
-        height: 150
+        x: 173
+        y: 407
+        width: 151
+        height: 158
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -222,20 +162,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 20e2245a192f11040800000000000000
-      internalID: 4616737800388226562
+      spriteID: e126903ab349439e0800000000000000
+      internalID: -1642524980224105954
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk 3
+      name: Respawn
       rect:
         serializedVersion: 2
-        x: 331
-        y: 234
-        width: 125
-        height: 147
+        x: 340
+        y: 422
+        width: 116
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -243,20 +183,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 25c7c1e254a07d690800000000000000
-      internalID: -7577576555784930222
+      spriteID: ce543a3c68d957dd0800000000000000
+      internalID: -2488910016918895124
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Walk 4
+      name: Blink
       rect:
         serializedVersion: 2
-        x: 475
-        y: 237
-        width: 130
-        height: 147
+        x: 477
+        y: 421
+        width: 121
+        height: 151
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -264,8 +204,92 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba118d9e38b164f10800000000000000
-      internalID: 2253518916923429291
+      spriteID: cfe19473865b81b50800000000000000
+      internalID: 6564195916101263100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Run 1
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 236
+        width: 127
+        height: 151
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07351508468e0ccc0800000000000000
+      internalID: -3692696176096619664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Run 2
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 238
+        width: 129
+        height: 149
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 187c7a42e26718880800000000000000
+      internalID: -8610471072000129151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Run 3
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 243
+        width: 124
+        height: 145
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11b4361e68fb83b80800000000000000
+      internalID: -8414765317713868015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Run 4
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 246
+        width: 128
+        height: 145
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 294fc581a4d1a2d40800000000000000
+      internalID: 5560288894015829138
       vertices: []
       indices: 
       edges: []
@@ -274,19 +298,19 @@ TextureImporter:
       name: Bite 1
       rect:
         serializedVersion: 2
-        x: 34
-        y: 49
-        width: 117
-        height: 146
+        x: 38
+        y: 58
+        width: 115
+        height: 144
       alignment: 9
-      pivot: {x: 0.32267448, y: 0.5370705}
+      pivot: {x: 0.32519698, y: 0.5761452}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: da5cc9dc6b18a39f0800000000000000
-      internalID: -487934987482643027
+      spriteID: 7c86fe6a58294d220800000000000000
+      internalID: 2509791995081222343
       vertices: []
       indices: 
       edges: []
@@ -295,19 +319,19 @@ TextureImporter:
       name: Bite 2
       rect:
         serializedVersion: 2
-        x: 173
-        y: 54
-        width: 178
-        height: 118
+        x: 177
+        y: 63
+        width: 176
+        height: 116
       alignment: 9
-      pivot: {x: 0.3124958, y: 0.69111145}
+      pivot: {x: 0.3598234, y: 0.6890501}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 15f07a17a2161c0a0800000000000000
-      internalID: -6863097522212630703
+      spriteID: 08655ae7e69ba5290800000000000000
+      internalID: -7900798712045808000
       vertices: []
       indices: 
       edges: []
@@ -316,10 +340,10 @@ TextureImporter:
       name: Jump 1
       rect:
         serializedVersion: 2
-        x: 361
-        y: 58
-        width: 116
-        height: 147
+        x: 365
+        y: 67
+        width: 114
+        height: 145
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -327,8 +351,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fdcb01992d6cbb6c0800000000000000
-      internalID: -4126486025741484833
+      spriteID: b25b6de6114928860800000000000000
+      internalID: 7530744329511810347
       vertices: []
       indices: 
       edges: []
@@ -337,19 +361,19 @@ TextureImporter:
       name: Jump 2
       rect:
         serializedVersion: 2
-        x: 497
-        y: 58
-        width: 140
-        height: 146
+        x: 501
+        y: 67
+        width: 138
+        height: 144
       alignment: 9
-      pivot: {x: 0.44, y: 0.5}
+      pivot: {x: 0.43, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f83e7ab462fa6480800000000000000
-      internalID: -8905038798732248845
+      spriteID: 4878129409f4c9ec0800000000000000
+      internalID: -3558882124408715388
       vertices: []
       indices: 
       edges: []
