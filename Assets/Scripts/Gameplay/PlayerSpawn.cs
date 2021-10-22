@@ -11,6 +11,8 @@ namespace Platformer.Gameplay
     public class PlayerSpawn : Simulation.Event<PlayerSpawn>
     {
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        Combat combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
+        SpriteRenderer sprite = GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>();
 
         public override void Execute()
         {
@@ -21,6 +23,8 @@ namespace Platformer.Gameplay
                 player.audioSource.PlayOneShot(player.respawnAudio);
             player.health.Increment();
             player.Teleport(model.spawnPoint.transform.position);
+            sprite.flipX = false;
+            combat.facingRight = true;
             player.jumpState = PlayerController.JumpState.Grounded;
             player.animator.SetBool("dead", false);
             model.virtualCamera.m_Follow = player.transform;
