@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Combat : MonoBehaviour
 {
@@ -62,6 +63,10 @@ public class Combat : MonoBehaviour
     
         Gizmos.DrawWireSphere(attackPointR.position, attackRange);
         Gizmos.DrawWireSphere(attackPointL.position, attackRange);
+    }
+
+    public void ReloadScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
     

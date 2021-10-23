@@ -72,13 +72,19 @@ namespace Platformer.Mechanics
 
         protected virtual void OnEnable()
         {
-            body = GetComponent<Rigidbody2D>();
+            try{
+                body = GetComponent<Rigidbody2D>();
             body.isKinematic = true;
+            }
+            catch{}
         }
 
         protected virtual void OnDisable()
         {
-            body.isKinematic = false;
+            try{
+                body.isKinematic = false;
+            }
+            catch{}
         }
 
         protected virtual void Start()
@@ -127,49 +133,53 @@ namespace Platformer.Mechanics
 
         void PerformMovement(Vector2 move, bool yMovement)
         {
-            var distance = move.magnitude;
+            try{
+                var distance = move.magnitude;
 
-            if (distance > minMoveDistance)
-            {
-                //check if we hit anything in current direction of travel
-                var count = body.Cast(move, contactFilter, hitBuffer, distance + shellRadius);
-                for (var i = 0; i < count; i++)
+                if (distance > minMoveDistance)
                 {
-                    var currentNormal = hitBuffer[i].normal;
+                    //check if we hit anything in current direction of travel
+                    var count = body.Cast(move, contactFilter, hitBuffer, distance + shellRadius);
+                    for (var i = 0; i < count; i++)
+                    {
+                        var currentNormal = hitBuffer[i].normal;
 
-                    //is this surface flat enough to land on?
-                    if (currentNormal.y > minGroundNormalY)
-                    {
-                        IsGrounded = true;
-                        // if moving up, change the groundNormal to new surface normal.
-                        if (yMovement)
+                        //is this surface flat enough to land on?
+                        if (currentNormal.y > minGroundNormalY)
                         {
-                            groundNormal = currentNormal;
-                            currentNormal.x = 0;
+                            IsGrounded = true;
+                            // if moving up, change the groundNormal to new surface normal.
+                            if (yMovement)
+                            {
+                                groundNormal = currentNormal;
+                                currentNormal.x = 0;
+                            }
                         }
-                    }
-                    if (IsGrounded)
-                    {
-                        //how much of our velocity aligns with surface normal?
-                        var projection = Vector2.Dot(velocity, currentNormal);
-                        if (projection < 0)
+                        if (IsGrounded)
                         {
-                            //slower velocity if moving against the normal (up a hill).
-                            velocity = velocity - projection * currentNormal;
+                            //how much of our velocity aligns with surface normal?
+                            var projection = Vector2.Dot(velocity, currentNormal);
+                            if (projection < 0)
+                            {
+                                //slower velocity if moving against the normal (up a hill).
+                                velocity = velocity - projection * currentNormal;
+                            }
                         }
+                        else
+                        {
+                            //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
+                            velocity.x *= 0;
+                            velocity.y = Mathf.Min(velocity.y, 0);
+                        }
+                        //remove shellDistance from actual move distance.
+                        var modifiedDistance = hitBuffer[i].distance - shellRadius;
+                        distance = modifiedDistance < distance ? modifiedDistance : distance;
                     }
-                    else
-                    {
-                        //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
-                        velocity.x *= 0;
-                        velocity.y = Mathf.Min(velocity.y, 0);
-                    }
-                    //remove shellDistance from actual move distance.
-                    var modifiedDistance = hitBuffer[i].distance - shellRadius;
-                    distance = modifiedDistance < distance ? modifiedDistance : distance;
                 }
+                body.position = body.position + move.normalized * distance;
             }
-            body.position = body.position + move.normalized * distance;
+            catch{}
+            
         }
 
     }
