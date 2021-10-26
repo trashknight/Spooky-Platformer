@@ -154,6 +154,8 @@ MonoBehaviour:
   projectile: {fileID: 6947208921515425741, guid: 9c989e1f4659abb4d95082e8b41cf613,
     type: 3}
   spawnpoint: {fileID: 1330073870875663934}
+  SpawnID: 0
+  animator: {fileID: 4717783317861009023}
 --- !u!70 &6240990683592836302
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

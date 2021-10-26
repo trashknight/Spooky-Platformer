@@ -51,6 +51,16 @@ public class Combat : MonoBehaviour
         // Damage those baddies
         foreach(Collider2D enemy in hitEnemies)
         {
+            // if you've destroyed a pumpkin, make the corresponding pumpkineer grow a new one
+            PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
+            if (pumpkin) {
+                int spawnId = pumpkin.spawnId;
+                foreach (var pumpkineer in FindObjectsOfType(typeof(ShootProjectile)) as ShootProjectile[]) {
+                    if (pumpkineer.SpawnID == spawnId) {
+                        pumpkineer.RespawnPumpkin();
+                    }
+                }
+            }
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
             Debug.Log("sending damage");
         }

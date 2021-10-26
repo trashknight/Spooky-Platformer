@@ -4,16 +4,9 @@ using UnityEngine;
 
 public class PumpkinScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public int spawnId = 0;
+    public void SetSpawnId(int id) {
+        spawnId = id;
     }
 
     void SelfDestruct() {
