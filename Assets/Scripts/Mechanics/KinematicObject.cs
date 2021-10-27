@@ -33,6 +33,7 @@ namespace Platformer.Mechanics
         protected Vector2 targetVelocity;
         protected Vector2 groundNormal;
         protected Rigidbody2D body;
+        private GameObject obj;
         protected ContactFilter2D contactFilter;
         protected RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
 
@@ -46,7 +47,7 @@ namespace Platformer.Mechanics
         /// <param name="value"></param>
         public void Bounce(float value)
         {
-            velocity.y = value;
+            //velocity.y = value;
         }
 
         /// <summary>
@@ -55,8 +56,8 @@ namespace Platformer.Mechanics
         /// <param name="dir"></param>
         public void Bounce(Vector2 dir)
         {
-            velocity.y = dir.y;
-            velocity.x = dir.x;
+            // velocity.y = dir.y;
+            // velocity.x = dir.x;
         }
 
         /// <summary>
@@ -92,6 +93,9 @@ namespace Platformer.Mechanics
             contactFilter.useTriggers = false;
             contactFilter.SetLayerMask(Physics2D.GetLayerCollisionMask(gameObject.layer));
             contactFilter.useLayerMask = true;
+            if (body) {
+                obj = body.gameObject;
+            } 
         }
 
         protected virtual void Update()
@@ -126,6 +130,15 @@ namespace Platformer.Mechanics
             PerformMovement(move, false);
 
             move = Vector2.up * deltaPosition.y;
+            if (obj) {
+                if (obj.tag == "NoUp") {
+                    if (move.y > 0) {
+                        move = Vector2.zero;
+                        Debug.Log("Deleting vert mvmt");
+                    }
+                }
+            }
+            
 
             PerformMovement(move, true);
 
@@ -168,8 +181,9 @@ namespace Platformer.Mechanics
                         else
                         {
                             //We are airborne, but hit something, so cancel vertical up and horizontal velocity.
-                            velocity.x *= 0;
-                            velocity.y = Mathf.Min(velocity.y, 0);
+                            // CHANGING TO TRY TO FIX PLATFORMING
+                            // velocity.x *= 0;
+                            // velocity.y = Mathf.Min(velocity.y, 0);
                         }
                         //remove shellDistance from actual move distance.
                         var modifiedDistance = hitBuffer[i].distance - shellRadius;

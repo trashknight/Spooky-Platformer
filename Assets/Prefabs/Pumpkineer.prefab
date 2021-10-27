@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 5091917857096189447}
   m_Layer: 9
   m_Name: Pumpkineer
-  m_TagString: Untagged
+  m_TagString: NoUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -26,6 +26,7 @@ namespace Platformer.Mechanics
         private PlayerController player;
         private AudioSource audiosrc;
         public Animator animator;
+        private Combat combat;
         
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace Platformer.Mechanics
             player = GetComponent<PlayerController>();
             audiosrc = GetComponent<AudioSource>();
             animator = GetComponent<Animator>();
+            combat = GetComponent<Combat>();
         }
 
         /// <summary>
@@ -55,6 +57,7 @@ namespace Platformer.Mechanics
             currentHP = maxHP;
             UpdateLives();
             isInvincible = false;
+            combat.EnableAttack();
         }
 
         /// <summary>
@@ -96,6 +99,7 @@ namespace Platformer.Mechanics
                 }
             sprite.enabled = true;
             isInvincible = false;
+            combat.EnableAttack();
         }
 
         /// <summary>

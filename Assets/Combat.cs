@@ -69,12 +69,12 @@ public class Combat : MonoBehaviour
 
     public void EnableAttack() {
         attackEnabled = true;
-        Debug.Log("Enabling Attack");
+        //Debug.Log("Enabling Attack");
     }
 
     public void DisableAttack() {
         attackEnabled = false;
-        Debug.Log("Disabling Attack");
+        //Debug.Log("Disabling Attack");
     }
 
     private void OnDrawGizmosSelected()
