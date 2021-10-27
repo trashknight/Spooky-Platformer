@@ -18,10 +18,12 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
+            Debug.Log("Executing player death");
             combat.attackEnabled = false;
             var player = model.player;
             if (player.health.IsAlive)
             {
+                player.health.IsAlive = false;
                 player.health.Die();
                 model.virtualCamera.m_Follow = null;
                 model.virtualCamera.m_LookAt = null;

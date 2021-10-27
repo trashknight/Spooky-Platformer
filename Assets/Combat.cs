@@ -37,34 +37,45 @@ public class Combat : MonoBehaviour
 
     public void Attack()
     {
+        if (attackEnabled) {
+            Debug.Log("Calling attack");
+            // Detect enemies that are gonna die
+            Collider2D[] hitEnemies;
+            if (facingRight) {
+                hitEnemies = Physics2D.OverlapCircleAll(attackPointR.position, attackRange, enemyLayers);
+            }
+            else {
+                hitEnemies = Physics2D.OverlapCircleAll(attackPointL.position, attackRange, enemyLayers);
+            }
 
-        Debug.Log("Calling attack");
-        // Detect enemies that are gonna die
-        Collider2D[] hitEnemies;
-        if (facingRight) {
-            hitEnemies = Physics2D.OverlapCircleAll(attackPointR.position, attackRange, enemyLayers);
-        }
-        else {
-            hitEnemies = Physics2D.OverlapCircleAll(attackPointL.position, attackRange, enemyLayers);
-        }
-
-        // Damage those baddies
-        foreach(Collider2D enemy in hitEnemies)
-        {
-            // if you've destroyed a pumpkin, make the corresponding pumpkineer grow a new one
-            PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
-            if (pumpkin) {
-                int spawnId = pumpkin.spawnId;
-                foreach (var pumpkineer in FindObjectsOfType(typeof(ShootProjectile)) as ShootProjectile[]) {
-                    if (pumpkineer.SpawnID == spawnId) {
-                        pumpkineer.RespawnPumpkin();
+            // Damage those baddies
+            foreach(Collider2D enemy in hitEnemies)
+            {
+                // if you've destroyed a pumpkin, make the corresponding pumpkineer grow a new one
+                PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
+                if (pumpkin) {
+                    int spawnId = pumpkin.spawnId;
+                    foreach (var pumpkineer in FindObjectsOfType(typeof(ShootProjectile)) as ShootProjectile[]) {
+                        if (pumpkineer.SpawnID == spawnId) {
+                            pumpkineer.RespawnPumpkin();
+                        }
                     }
                 }
+                enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+                Debug.Log("sending damage");
             }
-            enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
-            Debug.Log("sending damage");
         }
     }   
+
+    public void EnableAttack() {
+        attackEnabled = true;
+        Debug.Log("Enabling Attack");
+    }
+
+    public void DisableAttack() {
+        attackEnabled = false;
+        Debug.Log("Disabling Attack");
+    }
 
     private void OnDrawGizmosSelected()
     {

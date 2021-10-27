@@ -34,11 +34,17 @@ namespace Platformer.Mechanics
         void OnCollisionEnter2D(Collision2D collision)
         {
             var player = collision.gameObject.GetComponent<PlayerController>();
+            var playerHealth = collision.gameObject.GetComponent<Health>();
+            var combat = collision.gameObject.GetComponent<Combat>();
             if (player != null)
             {
+                combat.DisableAttack();
                 var ev = Schedule<PlayerEnemyCollision>();
                 ev.player = player;
                 ev.enemy = this;
+            }
+            if (playerHealth != null) {
+                playerHealth.Decrement();
             }
         }
 

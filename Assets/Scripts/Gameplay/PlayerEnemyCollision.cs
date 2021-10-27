@@ -13,6 +13,7 @@ namespace Platformer.Gameplay
     /// <typeparam name="EnemyCollision"></typeparam>
     public class PlayerEnemyCollision : Simulation.Event<PlayerEnemyCollision>
     {
+        // This does nothing currently
         public EnemyController enemy;
         public PlayerController player;
 
@@ -48,7 +49,7 @@ namespace Platformer.Gameplay
             }
             else
             {
-                Schedule<PlayerDeath>();
+                //Schedule<PlayerDeath>();
             }
         }
     }
