@@ -23,7 +23,7 @@ namespace Platformer.Gameplay
             if (player.audioSource && player.respawnAudio)
                 player.audioSource.PlayOneShot(player.respawnAudio);
             player.health.Reset();
-            player.Teleport(model.spawnPoint.transform.position);
+            player.Teleport(player.health.spawnPoint.transform.position);
             sprite.flipX = false;
             combat.facingRight = true;
             player.jumpState = PlayerController.JumpState.Grounded;

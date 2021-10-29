@@ -20,6 +20,8 @@ public class Combat : MonoBehaviour
     public bool attackEnabled = true;
     public bool facingRight = true;
 
+    
+
     // Update is called once per frame
     void Update()
     {

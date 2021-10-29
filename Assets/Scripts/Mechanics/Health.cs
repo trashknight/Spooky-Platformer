@@ -17,7 +17,8 @@ namespace Platformer.Mechanics
 
         public GameObject respawnVFX;
         public float respawnDuration = 2f;
-        public Transform respawnTransform;
+        public Transform respawnVFXTransform;
+        public Transform spawnPoint;
         public GameObject life1, life2, life3;
         public bool isInvincible = false;
         public float invincibilityDurationSeconds = 1.5f;
@@ -116,7 +117,7 @@ namespace Platformer.Mechanics
         }
 
         void MakeRespawnVFX () {
-            GameObject respawn = Instantiate(respawnVFX, respawnTransform.position, respawnTransform.rotation);
+            GameObject respawn = Instantiate(respawnVFX, respawnVFXTransform.position, respawnVFXTransform.rotation);
             Destroy(respawn, respawnDuration);
         }
 
