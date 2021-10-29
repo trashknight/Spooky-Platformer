@@ -214,6 +214,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnpoint: {fileID: 1241130645176132786}
   VFXpoint: {fileID: 5059126339142097196}
+  spriteRenderer: {fileID: 207373642430014276}
+  activatedSprite: {fileID: 21300000, guid: 6667fae4048103943b704c8faae99d18, type: 3}
 --- !u!61 &1053291362718816926
 BoxCollider2D:
   m_ObjectHideFlags: 0

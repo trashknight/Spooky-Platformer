@@ -8,6 +8,8 @@ public class SpawnActivatorTrigger : MonoBehaviour
     // Start is called before the first frame update
     public Transform spawnpoint;
     public Transform VFXpoint;
+    public SpriteRenderer spriteRenderer;
+    public Sprite activatedSprite;
     
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -16,6 +18,7 @@ public class SpawnActivatorTrigger : MonoBehaviour
         if (player != null) {
             player.spawnPoint = spawnpoint;
             player.respawnVFXTransform = VFXpoint;
+            spriteRenderer.sprite = activatedSprite;
         }
     }
 }
