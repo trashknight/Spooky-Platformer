@@ -21,6 +21,11 @@ namespace Platformer.UI
             }
         }
 
+        public void StartGame() {
+            gameObject.SetActive(false);
+        }
+            
+
         void OnEnable()
         {
             SetActivePanel(0);
