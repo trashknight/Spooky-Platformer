@@ -10,6 +10,7 @@ namespace Platformer.UI
     public class MainUIController : MonoBehaviour
     {
         public GameObject[] panels;
+        public MetaGameController metaGameController;
 
         public void SetActivePanel(int index)
         {
@@ -22,7 +23,10 @@ namespace Platformer.UI
         }
 
         public void StartGame() {
-            gameObject.SetActive(false);
+            metaGameController.ToggleMainMenu(show: !metaGameController.showMainCanvas);
+        }
+        private void Start() {
+            metaGameController = FindObjectOfType<MetaGameController>();
         }
             
 

@@ -25,7 +25,7 @@ namespace Platformer.UI
         /// </summary>
         public GameController gameController;
 
-        bool showMainCanvas = true;
+        public bool showMainCanvas = true;
 
         void OnEnable()
         {
