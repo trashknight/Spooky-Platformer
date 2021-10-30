@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1691551523664221902}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.49, y: 0.16, z: 0}
+  m_LocalPosition: {x: -0.69, y: 0.16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4717783317861008993}
@@ -111,7 +111,7 @@ SpriteRenderer:
   m_Sprite: {fileID: -2542756484220525600, guid: 4cb0752807b2a044992f3bf181709d63,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1.12, y: 1.3066666}
@@ -219,3 +219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 1
+  deathVFX: {fileID: 7821439053487967453, guid: e2d427355b7a353408daad7dd26350a3,
+    type: 3}
+  deathVFXDuration: 2
+  deathVFXTransform: {fileID: 4717783317861008993}

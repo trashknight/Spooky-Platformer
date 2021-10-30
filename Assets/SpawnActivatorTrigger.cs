@@ -10,7 +10,10 @@ public class SpawnActivatorTrigger : MonoBehaviour
     public Transform VFXpoint;
     public SpriteRenderer spriteRenderer;
     public Sprite activatedSprite;
-    
+    public GameObject activationVFX;
+    public float activationDuration = 2f;
+    public Transform activationVFXTransform;
+
 
     private void OnTriggerEnter2D(Collider2D other) {
         // add any other effects for getting the checkpoint
@@ -19,6 +22,8 @@ public class SpawnActivatorTrigger : MonoBehaviour
             player.spawnPoint = spawnpoint;
             player.respawnVFXTransform = VFXpoint;
             spriteRenderer.sprite = activatedSprite;
+            GameObject activation = Instantiate(activationVFX, activationVFXTransform.position, activationVFXTransform.rotation);
+            Destroy(activation, activationDuration);
         }
     }
 }

@@ -7,10 +7,10 @@ public class Enemy : MonoBehaviour
     public int maxHealth = 1;
     int currentHealth;
 
-    void Start()
-    {
-        
-    }
+    public GameObject deathVFX;
+    public float deathVFXDuration = 2f;
+    public Transform deathVFXTransform;
+
 
     // Update is called once per frame
     void Update()
@@ -35,6 +35,8 @@ public class Enemy : MonoBehaviour
         Debug.Log("Enemy died of having too much sex!");
 
         // Die you turd animation
+        GameObject death = Instantiate(deathVFX, deathVFXTransform.position, deathVFXTransform.rotation);
+        Destroy(death, deathVFXDuration);
 
         // Disable the enemy
         Destroy(gameObject);

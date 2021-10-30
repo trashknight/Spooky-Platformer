@@ -18,6 +18,7 @@ namespace Platformer.Mechanics
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
+        public GameObject walkingParticles;
 
         public int score = 0;
 
@@ -141,6 +142,11 @@ namespace Platformer.Mechanics
 
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
+            if ((IsGrounded) && ((Mathf.Abs(velocity.x) / maxSpeed) != 0)) {
+                walkingParticles.SetActive(true);
+            } else {
+                walkingParticles.SetActive(false);
+            }
 
             targetVelocity = move * maxSpeed;
         }
