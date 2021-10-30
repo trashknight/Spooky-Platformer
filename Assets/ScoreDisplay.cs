@@ -8,17 +8,18 @@ public class ScoreDisplay : MonoBehaviour
 {
     Text scoreText;
     PlayerController player;
+    GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
         scoreText = GetComponent<Text>();
-        player = FindObjectOfType<PlayerController>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        scoreText.text = player.score.ToString();
+        scoreText.text = gameManager.score.ToString();
     }
 }

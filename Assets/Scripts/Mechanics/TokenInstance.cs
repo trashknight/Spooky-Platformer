@@ -29,9 +29,11 @@ namespace Platformer.Mechanics
         //active frame in animation, updated by the controller.
         internal int frame = 0;
         internal bool collected = false;
+        public GameManager gameManager;
 
         void Awake()
         {
+            gameManager = FindObjectOfType<GameManager>();
             _renderer = GetComponent<SpriteRenderer>();
             if (randomAnimationStartTime)
                 frame = Random.Range(0, sprites.Length);
@@ -57,7 +59,7 @@ namespace Platformer.Mechanics
             // var ev = Schedule<PlayerTokenCollision>();
             // ev.token = this;
             // ev.player = player;
-            player.score += 1;
+            gameManager.score += 1;
             AudioSource.PlayClipAtPoint(tokenCollectAudio, transform.position);
             Destroy(gameObject);
         }

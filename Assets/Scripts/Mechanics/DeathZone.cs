@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Platformer.Gameplay;
 using UnityEngine;
 using static Platformer.Core.Simulation;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.Mechanics
 {
@@ -18,8 +19,9 @@ namespace Platformer.Mechanics
             var e = collider.gameObject.GetComponent<EnemyController>();
             if (p != null)
             {
-                var ev = Schedule<PlayerEnteredDeathZone>();
-                ev.deathzone = this;
+                // var ev = Schedule<PlayerEnteredDeathZone>();
+                // ev.deathzone = this;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             if (e != null) {
                 Destroy(collider.gameObject);

@@ -13,6 +13,7 @@ namespace Platformer.Gameplay
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
         Combat combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
         SpriteRenderer sprite = GameObject.FindGameObjectWithTag("Player").GetComponent<SpriteRenderer>();
+        GameManager gameManager = GameObject.FindObjectOfType<GameManager>();
 
         public override void Execute()
         {
@@ -23,8 +24,8 @@ namespace Platformer.Gameplay
             if (player.audioSource && player.respawnAudio)
                 player.audioSource.PlayOneShot(player.respawnAudio);
             player.health.Reset();
-            player.Teleport(player.health.spawnPoint.transform.position);
-            sprite.flipX = false;
+            player.Teleport(player.spawnPoint.transform.position);
+            //sprite.flipX = false;
             combat.facingRight = true;
             player.jumpState = PlayerController.JumpState.Grounded;
             player.animator.SetBool("dead", false);

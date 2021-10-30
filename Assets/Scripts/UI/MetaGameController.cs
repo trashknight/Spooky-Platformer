@@ -24,8 +24,14 @@ namespace Platformer.UI
         /// The game controller.
         /// </summary>
         public GameController gameController;
+        GameManager gameManager;
 
-        public bool showMainCanvas = true;
+        public bool showMainCanvas;
+
+        private void Start() {
+            gameManager = GetComponent<GameManager>();
+            showMainCanvas = gameManager.showMenu;
+        }
 
         void OnEnable()
         {
@@ -41,6 +47,7 @@ namespace Platformer.UI
             if (this.showMainCanvas != show)
             {
                 _ToggleMainMenu(show);
+                gameManager.showMenu = false;
             }
         }
 

@@ -18,7 +18,6 @@ namespace Platformer.Mechanics
         public GameObject respawnVFX;
         public float respawnDuration = 2f;
         public Transform respawnVFXTransform;
-        public Transform spawnPoint;
         public GameObject life1, life2, life3;
         public bool isInvincible = false;
         public float invincibilityDurationSeconds = 1.5f;
@@ -28,6 +27,7 @@ namespace Platformer.Mechanics
         private AudioSource audiosrc;
         public Animator animator;
         private Combat combat;
+        public Transform[] spawnpoints;
         
 
         /// <summary>

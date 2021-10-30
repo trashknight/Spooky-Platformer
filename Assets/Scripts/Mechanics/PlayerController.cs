@@ -20,7 +20,6 @@ namespace Platformer.Mechanics
         public AudioClip ouchAudio;
         public GameObject walkingParticles;
 
-        public int score = 0;
 
         /// <summary>
         /// Max horizontal speed of the player.
@@ -47,6 +46,9 @@ namespace Platformer.Mechanics
         public Bounds Bounds => collider2d.bounds;
         Combat combat;
 
+        public Transform spawnPoint;
+        GameManager gameManager;
+
         void Awake()
         {
             health = GetComponent<Health>();
@@ -55,6 +57,12 @@ namespace Platformer.Mechanics
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
             combat = GetComponent<Combat>();
+            gameManager = FindObjectOfType<GameManager>();
+        }
+        new private void Start() {
+            // i want to call player spawn at the beginning of the scene, but there's some problem accessing the simulation...
+            spawnPoint = health.spawnpoints[gameManager.spawnPointId];
+            Simulation.Schedule<PlayerSpawn>(0);
         }
 
         protected override void Update()
