@@ -17,8 +17,10 @@ namespace Platformer.Mechanics
     {
         Combat combat;
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        GameController gameController;
         private void Start() {
             combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
+            gameController = GameObject.FindObjectOfType<GameController>();
             
         }
         void OnTriggerEnter2D(Collider2D collider)
@@ -36,6 +38,7 @@ namespace Platformer.Mechanics
                 // p.health.Die();
                 if (p.audioSource && p.ouchAudio)
                     p.audioSource.PlayOneShot(p.ouchAudio);
+                gameController.enabled = false;
                 combat.ReloadScene(0.5f);
             }
             if (e != null) {
