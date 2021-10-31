@@ -17,6 +17,7 @@ namespace Platformer.Gameplay
             var player = model.player;
             player.controlEnabled = true;
             combat.attackEnabled = true;
+            player.animator.SetBool("Spawning", false);
         }
     }
 }

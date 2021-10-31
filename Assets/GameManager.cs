@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int score = 0;
+    public int unsavedScore = 0;
+    public int savedScore = 0;
     public int spawnPointId;
     public bool showMenu = true;
 

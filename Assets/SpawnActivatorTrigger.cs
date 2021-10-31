@@ -22,6 +22,8 @@ public class SpawnActivatorTrigger : MonoBehaviour
         var player = other.gameObject.GetComponent<Health>();
         if (player != null) {
             gameManager.spawnPointId = spawnPointId;
+            gameManager.savedScore += gameManager.unsavedScore;
+            gameManager.unsavedScore = 0;
             player.respawnVFXTransform = VFXpoint;
             spriteRenderer.sprite = activatedSprite;
             GameObject activation = Instantiate(activationVFX, activationVFXTransform.position, activationVFXTransform.rotation);

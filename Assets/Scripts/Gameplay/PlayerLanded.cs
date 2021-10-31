@@ -1,5 +1,6 @@
 using Platformer.Core;
 using Platformer.Mechanics;
+using UnityEngine;
 
 namespace Platformer.Gameplay
 {
@@ -11,9 +12,12 @@ namespace Platformer.Gameplay
     {
         public PlayerController player;
 
+
+
         public override void Execute()
         {
-
+            player = GameObject.FindObjectOfType<PlayerController>();
+            player.LandedVFX();
         }
     }
 }

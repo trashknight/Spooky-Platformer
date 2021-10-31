@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Platformer.Gameplay;
 using UnityEngine;
+using Platformer.Core;
+using Platformer.Model;
 using static Platformer.Core.Simulation;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +15,12 @@ namespace Platformer.Mechanics
     /// </summary>
     public class DeathZone : MonoBehaviour
     {
+        Combat combat;
+        PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        private void Start() {
+            combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
+            
+        }
         void OnTriggerEnter2D(Collider2D collider)
         {
             var p = collider.gameObject.GetComponent<PlayerController>();
@@ -21,7 +29,14 @@ namespace Platformer.Mechanics
             {
                 // var ev = Schedule<PlayerEnteredDeathZone>();
                 // ev.deathzone = this;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                model.virtualCamera.m_Follow = null;
+                model.virtualCamera.m_LookAt = null;
+                p.loseUnsavedPoints();
+                // p.health.Die();
+                if (p.audioSource && p.ouchAudio)
+                    p.audioSource.PlayOneShot(p.ouchAudio);
+                combat.ReloadScene(0.5f);
             }
             if (e != null) {
                 Destroy(collider.gameObject);

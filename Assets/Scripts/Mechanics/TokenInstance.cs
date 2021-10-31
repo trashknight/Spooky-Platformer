@@ -59,7 +59,7 @@ namespace Platformer.Mechanics
             // var ev = Schedule<PlayerTokenCollision>();
             // ev.token = this;
             // ev.player = player;
-            gameManager.score += 1;
+            gameManager.unsavedScore += 1;
             AudioSource.PlayClipAtPoint(tokenCollectAudio, transform.position);
             Destroy(gameObject);
         }

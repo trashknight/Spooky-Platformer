@@ -18,6 +18,7 @@ namespace Platformer.Gameplay
         public override void Execute()
         {
             var player = model.player;
+            player.animator.SetBool("Spawning", true);
             player.health.IsAlive = true;
             player.collider2d.enabled = true;
             player.controlEnabled = false;
@@ -28,10 +29,9 @@ namespace Platformer.Gameplay
             //sprite.flipX = false;
             combat.facingRight = true;
             player.jumpState = PlayerController.JumpState.Grounded;
-            player.animator.SetBool("dead", false);
             model.virtualCamera.m_Follow = player.transform;
             model.virtualCamera.m_LookAt = player.transform;
-            Simulation.Schedule<EnablePlayerInput>(2.2f);
+            Simulation.Schedule<EnablePlayerInput>(1.9f);
         }
     }
 }

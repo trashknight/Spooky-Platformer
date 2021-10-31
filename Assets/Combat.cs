@@ -88,7 +88,13 @@ public class Combat : MonoBehaviour
         Gizmos.DrawWireSphere(attackPointL.position, attackRange);
     }
 
-    public void ReloadScene() {
+    public void ReloadScene(float time) {
+        StartCoroutine(ExecuteAfterTime(time));
+    }
+
+    IEnumerator ExecuteAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

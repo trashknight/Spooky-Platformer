@@ -48,6 +48,13 @@ namespace Platformer.Mechanics
 
         public Transform spawnPoint;
         GameManager gameManager;
+        public GameObject landedVFX;
+        public float landedVFXDuration = 2f;
+        public Transform landedVFXTransform;
+
+        public GameObject victory1;
+        public GameObject victory2;
+        public GameObject victory3;
 
         void Awake()
         {
@@ -98,6 +105,27 @@ namespace Platformer.Mechanics
                 combat.facingRight = false;
             }
 
+        }
+
+        public void victory() {
+            int score = gameManager.unsavedScore + gameManager.savedScore;
+            if (score > 43) {
+                victory3.SetActive(true);
+            } else if (score > 32) {
+                victory2.SetActive(true);
+            } else {
+                victory1.SetActive(true);
+            }
+                
+        }
+
+        public void LandedVFX(){
+            GameObject landed = Instantiate(landedVFX, landedVFXTransform.position, landedVFXTransform.rotation);
+            Destroy(landed, landedVFXDuration);
+        }
+
+        public void loseUnsavedPoints(){
+            gameManager.unsavedScore = 0;
         }
 
         void UpdateJumpState()

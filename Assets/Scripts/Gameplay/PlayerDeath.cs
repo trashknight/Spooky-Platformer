@@ -30,13 +30,15 @@ namespace Platformer.Gameplay
                 model.virtualCamera.m_LookAt = null;
                 // player.collider.enabled = false;
                 player.controlEnabled = false;
+                player.loseUnsavedPoints();
 
                 if (player.audioSource && player.ouchAudio)
                     player.audioSource.PlayOneShot(player.ouchAudio);
                 player.animator.SetTrigger("hurt");
                 player.animator.SetBool("dead", true);
                 //Simulation.Schedule<PlayerSpawn>(2);
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                combat.ReloadScene(1.5f);
             }
         }
     }
