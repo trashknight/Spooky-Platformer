@@ -7,6 +7,8 @@ public class Combat : MonoBehaviour
 {
 
     public Animator animator;
+    public AudioSource audioSource;
+    public AudioClip biteAudio;
 
     public Transform attackPointR;
     public Transform attackPointL;
@@ -41,6 +43,7 @@ public class Combat : MonoBehaviour
     {
         if (attackEnabled) {
             Debug.Log("Calling attack");
+            audioSource.PlayOneShot(biteAudio);
             // Detect enemies that are gonna die
             Collider2D[] hitEnemies;
             if (facingRight) {

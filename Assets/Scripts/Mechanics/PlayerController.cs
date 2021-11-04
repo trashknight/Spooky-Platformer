@@ -18,6 +18,8 @@ namespace Platformer.Mechanics
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
+        public AudioClip landedAudio;
+
         public GameObject walkingParticles;
 
 
@@ -77,8 +79,11 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) {
+                    if ((jumpState == JumpState.Grounded) || (jumpState == JumpState.Landed))
+                        Schedule<PlayerJumped>().player = this;
                     jumpState = JumpState.PrepareToJump;
+                }
                 else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
                 {
                     stopJump = true;
@@ -137,11 +142,12 @@ namespace Platformer.Mechanics
                     jumpState = JumpState.Jumping;
                     jump = true;
                     stopJump = false;
+                    
                     break;
                 case JumpState.Jumping:
                     if (!IsGrounded)
                     {
-                        Schedule<PlayerJumped>().player = this;
+                        
                         jumpState = JumpState.InFlight;
                     }
                     break;

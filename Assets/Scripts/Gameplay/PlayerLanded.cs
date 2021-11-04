@@ -18,6 +18,8 @@ namespace Platformer.Gameplay
         {
             player = GameObject.FindObjectOfType<PlayerController>();
             player.LandedVFX();
+            if (player.audioSource && player.jumpAudio)
+                player.audioSource.PlayOneShot(player.landedAudio);
         }
     }
 }
