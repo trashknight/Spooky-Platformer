@@ -155,7 +155,8 @@ namespace Platformer.Mechanics
                     var count = body.Cast(move, contactFilter, hitBuffer, distance + shellRadius);
                     for (var i = 0; i < count; i++)
                     {
-                        if ((hitBuffer[i].collider.gameObject.tag != "Player") && (hitBuffer[i].collider.gameObject.tag != "NoUp")) {
+                        var tag = hitBuffer[i].collider.gameObject.tag;
+                        if ((tag != "Player") && (tag != "NoUp") && (tag != "HitboxR") && (tag != "HitboxL")) {
                             var currentNormal = hitBuffer[i].normal;
 
                             //is this surface flat enough to land on?

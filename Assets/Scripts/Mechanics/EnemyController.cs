@@ -33,9 +33,26 @@ namespace Platformer.Mechanics
 
         void OnCollisionEnter2D(Collision2D collision)
         {
-            var player = collision.gameObject.GetComponent<PlayerController>();
-            var playerHealth = collision.gameObject.GetComponent<Health>();
-            var combat = collision.gameObject.GetComponent<Combat>();
+            GameObject playerObj = collision.gameObject;
+            var combat = playerObj.GetComponentInParent<Combat>();
+            if(collision.collider.tag == "HitboxR") {
+               // check facing right
+               if (combat.facingRight) {
+                   HandlePlayerCollision(playerObj);
+               }
+            }
+            if(collision.collider.tag == "HitboxL") {
+               // check facing left
+               if (!combat.facingRight) {
+                   HandlePlayerCollision(playerObj);
+               }
+            }
+        }
+
+        void HandlePlayerCollision(GameObject playerObj) {
+            var player = playerObj.GetComponentInParent<PlayerController>();
+            var playerHealth = playerObj.GetComponentInParent<Health>();
+            var combat = playerObj.GetComponentInParent<Combat>();
             if (player != null)
             {
                 combat.DisableAttack();
