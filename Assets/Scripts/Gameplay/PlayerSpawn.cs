@@ -18,6 +18,7 @@ namespace Platformer.Gameplay
         public override void Execute()
         {
             var player = model.player;
+            player.Teleport(player.spawnPoint.transform.position);
             player.animator.SetBool("Spawning", true);
             player.health.IsAlive = true;
             player.collider2d.enabled = true;
@@ -25,7 +26,6 @@ namespace Platformer.Gameplay
             if (player.audioSource && player.respawnAudio)
                 player.audioSource.PlayOneShot(player.respawnAudio);
             player.health.Reset();
-            player.Teleport(player.spawnPoint.transform.position);
             //sprite.flipX = false;
             combat.facingRight = true;
             player.jumpState = PlayerController.JumpState.Grounded;
