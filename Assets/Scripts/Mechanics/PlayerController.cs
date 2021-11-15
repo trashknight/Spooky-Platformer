@@ -19,6 +19,7 @@ namespace Platformer.Mechanics
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
         public AudioClip landedAudio;
+        public AudioClip spawnpointAudio;
 
         public GameObject walkingParticles;
 

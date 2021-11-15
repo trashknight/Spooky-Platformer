@@ -26,8 +26,12 @@ public class SpawnActivatorTrigger : MonoBehaviour
             gameManager.unsavedScore = 0;
             player.respawnVFXTransform = VFXpoint;
             spriteRenderer.sprite = activatedSprite;
+            var controller = other.gameObject.GetComponent<PlayerController>();
+            if (controller.audioSource && controller.jumpAudio)
+                controller.audioSource.PlayOneShot(controller.spawnpointAudio);
             GameObject activation = Instantiate(activationVFX, activationVFXTransform.position, activationVFXTransform.rotation);
             Destroy(activation, activationDuration);
+            
         }
     }
 }
