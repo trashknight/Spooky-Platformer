@@ -55,7 +55,7 @@ namespace Platformer.Mechanics
             var combat = playerObj.GetComponentInParent<Combat>();
             if (player != null)
             {
-                combat.DisableAttack();
+                // combat.DisableAttack();
                 var ev = Schedule<PlayerEnemyCollision>();
                 ev.player = player;
                 ev.enemy = this;

@@ -8,6 +8,7 @@ TagManager:
   - NoUp
   - HitboxR
   - HitboxL
+  - Blackout Square
   layers:
   - Default
   - TransparentFX

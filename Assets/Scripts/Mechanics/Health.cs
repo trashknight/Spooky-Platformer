@@ -100,7 +100,7 @@ namespace Platformer.Mechanics
                 }
             sprite.enabled = true;
             isInvincible = false;
-            combat.EnableAttack();
+            // combat.EnableAttack();
         }
 
         /// <summary>

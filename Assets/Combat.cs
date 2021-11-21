@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Combat : MonoBehaviour
 {
@@ -21,6 +22,14 @@ public class Combat : MonoBehaviour
     float nextattackTime =0f;
     public bool attackEnabled = true;
     public bool facingRight = true;
+
+    GameObject blackoutSquare;
+
+    private void Start() {
+        blackoutSquare = GameObject.FindGameObjectWithTag("Blackout Square");
+        blackoutSquare.SetActive(true);
+        StartCoroutine(ExecuteAfterTime(0.5f));
+    }
 
     
 
@@ -92,13 +101,34 @@ public class Combat : MonoBehaviour
     }
 
     public void ReloadScene(float time) {
-        StartCoroutine(ExecuteAfterTime(time));
+        // add in fadeout
+        StartCoroutine(FadeBlackoutSquare());
     }
 
     IEnumerator ExecuteAfterTime(float time)
     {
         yield return new WaitForSeconds(time);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartCoroutine(FadeBlackoutSquare(-4));
+    }
+
+    IEnumerator FadeBlackoutSquare(float fadeSpeed = 4) {
+        Color objectColor = blackoutSquare.GetComponent<Image>().color;
+        float fadeAmount;
+        bool go = true;
+        while (go) {
+            fadeAmount = objectColor.a + (fadeSpeed/3 * Time.deltaTime);
+
+            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
+            blackoutSquare.GetComponent<Image>().color = objectColor;
+            if ((blackoutSquare.GetComponent<Image>().color.a >= 1) && (fadeSpeed > 0)) {
+                go = false;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+            if ((blackoutSquare.GetComponent<Image>().color.a <= 0) && (fadeSpeed < 0)) {
+                go = false;
+            }
+            yield return null;
+        }       
     }
 }
     
