@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4845119455694499791}
   - component: {fileID: 4845119455694499788}
   - component: {fileID: 4845119455694499789}
-  - component: {fileID: 4845119455694499634}
+  - component: {fileID: 3440446462796855175}
   m_Layer: 0
   m_Name: Token
   m_TagString: Untagged
@@ -171,7 +171,7 @@ PolygonCollider2D:
       - {x: 0.07857143, y: -0.3557143}
       - {x: 0.09857143, y: -0.33857143}
       - {x: 0.21285714, y: -0.21857142}
---- !u!114 &4845119455694499634
+--- !u!114 &3440446462796855175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -187,3 +187,4 @@ MonoBehaviour:
   randomAnimationStartTime: 0
   idleAnimation: []
   collectedAnimation: []
+  gameManager: {fileID: 0}

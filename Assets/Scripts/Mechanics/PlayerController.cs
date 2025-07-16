@@ -5,16 +5,12 @@ using Platformer.Gameplay;
 using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
+using TMPro; // Needed for TextMeshProUGUI
 
 namespace Platformer.Mechanics
 {
-    /// <summary>
-    /// This is the main class used to implement control of the player.
-    /// It is a superset of the AnimationController class, but is inlined to allow for any kind of customisation.
-    /// </summary>
     public class PlayerController : KinematicObject
     {
-        
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
@@ -23,14 +19,7 @@ namespace Platformer.Mechanics
 
         public GameObject walkingParticles;
 
-
-        /// <summary>
-        /// Max horizontal speed of the player.
-        /// </summary>
         public float maxSpeed = 7;
-        /// <summary>
-        /// Initial jump velocity at the start of a jump.
-        /// </summary>
         public float jumpTakeOffSpeed = 7;
 
         public JumpState jumpState = JumpState.Grounded;
@@ -47,17 +36,23 @@ namespace Platformer.Mechanics
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
-        Combat combat;
+        Combat combat; 
 
         public Transform spawnPoint;
-        GameManager gameManager;
+        GameManager gameManager; // Reference to your GameManager
         public GameObject landedVFX;
         public float landedVFXDuration = 2f;
         public Transform landedVFXTransform;
 
-        public GameObject victory1;
-        public GameObject victory2;
-        public GameObject victory3;
+        // These are your references to the unique victory screen UI panels/GameObjects
+        public GameObject victory1; 
+        public GameObject victory2; 
+        public GameObject victory3; 
+
+        // References for common UI elements (Token Icon, Vial Count Text, Restart Message Text)
+        public TextMeshProUGUI commonVialCountText;
+        public TextMeshProUGUI commonRestartMessageText;
+        public GameObject commonTokenIcon; // Reference for the Image GameObject itself
 
         void Awake()
         {
@@ -66,11 +61,21 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
-            combat = GetComponent<Combat>();
+            combat = GetComponent<Combat>(); // Corrected: Should be just GetComponent<Combat>()
             gameManager = FindObjectOfType<GameManager>();
+
+            // Ensure ALL victory-related UI elements are hidden at the start of the scene.
+            if (victory1 != null) victory1.SetActive(false);
+            if (victory2 != null) victory2.SetActive(false);
+            if (victory3 != null) victory3.SetActive(false);
+
+            // Hide the common UI elements initially as well.
+            if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(false);
+            if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(false);
+            if (commonTokenIcon != null) commonTokenIcon.SetActive(false); 
         }
+
         new private void Start() {
-            // i want to call player spawn at the beginning of the scene, but there's some problem accessing the simulation...
             spawnPoint = health.spawnpoints[gameManager.spawnPointId];
             Simulation.Schedule<PlayerSpawn>(0);
         }
@@ -105,24 +110,63 @@ namespace Platformer.Mechanics
                 spriteRenderer.flipX = false;
                 combat.facingRight = true;
             }
-
             else if (move.x < -0.01f) {
                 spriteRenderer.flipX = true;
                 combat.facingRight = false;
             }
-
         }
 
         public void victory() {
             int score = gameManager.unsavedScore + gameManager.savedScore;
+            int totalVialsInLevel = 60; // IMPORTANT: Adjust this if your total number of vials is different!
+
+            Debug.Log($"Player collected a total of {score} vials. Determining victory screen...");
+
+            // First, hide all unique victory panels.
+            if (victory1 != null) victory1.SetActive(false);
+            if (victory2 != null) victory2.SetActive(false);
+            if (victory3 != null) victory3.SetActive(false);
+
+            // ACTIVATE COMMON UI ELEMENTS (these were hidden at Awake)
+            if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(true);
+            if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(true);
+            if (commonTokenIcon != null) commonTokenIcon.SetActive(true); 
+
+            // Update common text elements
+            if (commonVialCountText != null) {
+                commonVialCountText.text = $"COLLECTED: {score}/{totalVialsInLevel}";
+
+                // Change text color if 60/60
+                if (score == totalVialsInLevel)
+                {
+                    commonVialCountText.color = Color.yellow; // Set text color to yellow for perfect score
+                    Debug.Log("Full collection! Vial count text set to yellow.");
+                }
+                else
+                {
+                    // Reset to default color (e.g., white) if not a perfect score.
+                    // If your default text color in TextMeshPro is not white, change Color.white here
+                    // to match your default, or create a public Color variable for it.
+                    commonVialCountText.color = Color.white; 
+                    Debug.Log("Partial collection. Vial count text set to default color.");
+                }
+            } else { Debug.LogWarning("Common Vial Count Text not assigned in Inspector!"); }
+            
+            if (commonRestartMessageText != null) {
+                commonRestartMessageText.text = "CLICK ANYWHERE TO RESTART";
+            } else { Debug.LogWarning("Common Restart Message Text not assigned in Inspector!"); }
+            
+            // Activate the appropriate unique victory panel based on score thresholds
             if (score > 43) {
-                victory3.SetActive(true);
-            } else if (score > 32) {
-                victory2.SetActive(true);
-            } else {
-                victory1.SetActive(true);
+                if (victory3 != null) victory3.SetActive(true);
+                Debug.Log("Activated Victory Screen 3 (Score > 43)");
+            } else if (score > 32) { 
+                if (victory2 != null) victory2.SetActive(true);
+                Debug.Log("Activated Victory Screen 2 (Score 33-43)");
+            } else { 
+                if (victory1 != null) victory1.SetActive(true);
+                Debug.Log("Activated Victory Screen 1 (Score 0-32)");
             }
-                
         }
 
         public void LandedVFX(){
@@ -143,12 +187,10 @@ namespace Platformer.Mechanics
                     jumpState = JumpState.Jumping;
                     jump = true;
                     stopJump = false;
-                    
                     break;
                 case JumpState.Jumping:
                     if (!IsGrounded)
                     {
-                        
                         jumpState = JumpState.InFlight;
                     }
                     break;

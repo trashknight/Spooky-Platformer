@@ -9,15 +9,25 @@ namespace Platformer.Gameplay
     /// </summary>
     public class EnablePlayerInput : Simulation.Event<EnablePlayerInput>
     {
-        PlatformerModel model = Simulation.GetModel<PlatformerModel>();
-        Combat combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
-
-        public override void Execute() 
+        public override void Execute()
         {
+            var model = Simulation.GetModel<PlatformerModel>();
             var player = model.player;
+
+            if (player == null)
+            {
+                Debug.LogWarning("EnablePlayerInput: model.player is null.");
+                return;
+            }
+
             player.controlEnabled = true;
-            combat.attackEnabled = true;
             player.animator.SetBool("Spawning", false);
+
+            Combat combat = player.GetComponent<Combat>();
+            if (combat != null)
+            {
+                combat.attackEnabled = true;
+            }
         }
     }
 }

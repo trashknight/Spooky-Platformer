@@ -1,0 +1,22 @@
+using UnityEngine;
+using Platformer.Mechanics;
+
+public class SpiderDamageZone : MonoBehaviour
+{
+    public int contactDamage = 1;
+    public AudioClip hurtPlayerSound;
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        Health playerHealth = other.GetComponent<Health>();
+        if (playerHealth != null)
+        {
+            playerHealth.Decrement();
+
+            if (hurtPlayerSound != null)
+            {
+                AudioSource.PlayClipAtPoint(hurtPlayerSound, transform.position);
+            }
+        }
+    }
+}
