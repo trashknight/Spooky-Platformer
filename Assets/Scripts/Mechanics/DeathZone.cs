@@ -80,7 +80,7 @@ namespace Platformer.Mechanics
 
                 gameController.enabled = false;
 
-                combat.ReloadScene(0.5f);
+                p.combat.InitiateFadeAndReload(1.5f); // FIXED: Use 'p' instead of 'player'
 
             }
 

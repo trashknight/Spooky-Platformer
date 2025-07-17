@@ -88,7 +88,7 @@ namespace Platformer.Gameplay
 
                 //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
-                combat.ReloadScene(1.5f);
+                combat.InitiateFadeAndReload(1.5f); // NEW: Call the new method in Combat
 
             }
 

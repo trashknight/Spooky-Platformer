@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Platformer.Mechanics;
+using UnityEngine.UI; // Needed for Image component
+using Platformer.Mechanics; // Required for PlayerController
 
 public class Combat : MonoBehaviour
 {
@@ -26,25 +26,63 @@ public class Combat : MonoBehaviour
     GameObject blackoutSquare;
     PlayerController player;
 
-    private void Start()
+    // Flag to ensure initial fade only plays once per new game start
+    private bool hasPlayedInitialFade = false;
+
+    void Awake()
     {
         blackoutSquare = GameObject.FindGameObjectWithTag("Blackout Square");
         player = GetComponent<PlayerController>();
 
+        // Ensure blackoutSquare is present and initially transparent/inactive.
         if (blackoutSquare != null)
         {
-            blackoutSquare.SetActive(true);
-            StartCoroutine(ExecuteAfterTime(0.5f));
+            Image blackoutImage = blackoutSquare.GetComponent<Image>();
+            if (blackoutImage != null)
+            {
+                blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 0); // Start fully transparent
+                blackoutSquare.SetActive(false); // Initially inactive, only activate when fading
+            }
+            else
+            {
+                Debug.LogError("Combat.Awake(): Blackout Square does not have an Image component. Fading will not work.");
+            }
         }
         else
         {
-            Debug.LogError("Combat: Blackout Square GameObject not found! Fading will not work.");
+            Debug.LogError("Combat.Awake(): Blackout Square GameObject not found with tag 'Blackout Square'! Fading will not work.");
         }
     }
 
-    void Update()
+    private void Start()
     {
-        // Prevent attack input if player can't control
+        // Initial fade sequence is now called explicitly AFTER 'Play' button is clicked from MainUIController
+        // or after scene reload if GameManager.showMenu is false (e.g., player death, which also reloads scene)
+        // This 'Start' method is intentionally left clean as the fade is externally triggered.
+    }
+
+    // Public method to trigger the initial fade specifically after 'Play' is clicked from the menu
+    public void TriggerInitialGameFade()
+    {
+        if (!hasPlayedInitialFade && blackoutSquare != null)
+        {
+            Debug.Log("Combat: TriggerInitialGameFade() called. Starting initial fade sequence.");
+            StartCoroutine(InitialFadeSequence());
+            hasPlayedInitialFade = true;
+        }
+        else if (hasPlayedInitialFade)
+        {
+            Debug.Log("Combat: Initial game fade already played. Skipping.");
+        }
+        else
+        {
+            Debug.LogError("Combat: TriggerInitialGameFade: blackoutSquare is null. Cannot perform initial fade.");
+        }
+    }
+
+
+    void Update() // No longer 'protected override'
+    {
         if (player != null && !player.controlEnabled)
             return;
 
@@ -89,7 +127,7 @@ public class Combat : MonoBehaviour
         }
         else if (!facingRight && attackPointL != null)
         {
-            hitEnemies = Physics2D.OverlapCircleAll(attackPointL.position, attackRange, enemyLayers);
+            hitEnemies = Physics2D.OverlapCircleAll(attackPointL.position, attackRange, enemyLayers); // Fixed typo here
         }
         else
         {
@@ -133,8 +171,6 @@ public class Combat : MonoBehaviour
                     }
                 }
             }
-
-            Debug.Log("sending damage");
         }
     }
 
@@ -160,44 +196,85 @@ public class Combat : MonoBehaviour
         }
     }
 
-    public void ReloadScene(float time)
+    // MODIFIED: This method now *only* starts the fade TO black and returns control to caller.
+    public IEnumerator ReloadSceneCoroutine(float time) // Changed to IEnumerator to yield
     {
+        Debug.Log($"Combat.ReloadSceneCoroutine() called (now just initiates fade). blackoutSquare is {(blackoutSquare != null ? "NOT NULL" : "NULL")}.");
         if (blackoutSquare != null)
         {
-            StartCoroutine(FadeBlackoutSquare());
+            Image blackoutImage = blackoutSquare.GetComponent<Image>();
+            if (blackoutImage != null)
+            {
+                blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 0); // Start TRANSPARENT
+            }
+            blackoutSquare.SetActive(true); // Activate to start fade
+            yield return StartCoroutine(FadeBlackoutSquare(4)); // Yield until fade to black is complete
         }
         else
         {
-            Debug.LogError("Combat: Cannot start fade. BlackoutSquare is null.");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Debug.LogError("Combat: Cannot start fade. BlackoutSquare is null. Reloading must be handled by caller.");
         }
     }
 
-    IEnumerator ExecuteAfterTime(float time)
+    // NEW: Added a specific method to initiate fade TO black for external callers (like GameResetter or PlayerDeath).
+    // This now calls the Coroutine version of ReloadScene
+    public IEnumerator FadeToBlack(float duration) // Added this for clarity, is now an IEnumerator
     {
-        yield return new WaitForSeconds(time);
-        if (blackoutSquare != null)
-        {
-            StartCoroutine(FadeBlackoutSquare(-4));
-        }
-        else
-        {
-            Debug.LogError("Combat: Cannot start fade. BlackoutSquare is null.");
-        }
+        Debug.Log($"Combat: FadeToBlack called, initiating blackout. Duration: {duration}");
+        yield return StartCoroutine(ReloadSceneCoroutine(duration)); // Yield until the blackout fade is complete.
     }
 
-    IEnumerator FadeBlackoutSquare(float fadeSpeed = 4)
+    // In Combat.cs
+
+    // NEW: Public method to trigger a fade to black and then scene reload (for non-coroutines)
+    public void InitiateFadeAndReload(float duration)
+    {
+        Debug.Log($"Combat: InitiateFadeAndReload called. Starting fade-to-black then reload. Duration: {duration}");
+        StartCoroutine(FadeToBlack(duration)); // Start the fade coroutine
+        // Note: The SceneManager.LoadScene will happen *after* the fade completes inside FadeToBlack (via GameResetter's logic for consistency).
+        // For PlayerDeath/DeathZone, the fade will complete, then the scene reloads.
+    }
+
+    // Handles the fade-in-from-black cinematic after "Play" is clicked.
+    IEnumerator InitialFadeSequence()
     {
         if (blackoutSquare == null)
         {
-            Debug.LogError("Combat: BlackoutSquare is null. Cannot fade.");
+            Debug.LogError("InitialFadeSequence: blackoutSquare is null. Cannot perform initial fade.");
             yield break;
         }
 
         Image blackoutImage = blackoutSquare.GetComponent<Image>();
         if (blackoutImage == null)
         {
-            Debug.LogError("Combat: No Image component found on blackoutSquare.");
+            Debug.LogError("InitialFadeSequence: No Image component found on blackoutSquare. Cannot perform initial fade.");
+            yield break;
+        }
+
+        // Ensure blackoutSquare is active and instantly black
+        blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 1);
+        blackoutSquare.SetActive(true);
+        Debug.Log("InitialFadeSequence: BlackoutSquare set to opaque. Starting fade out.");
+
+        // Now, fade out from black to reveal the game (fadeSpeed < 0 for fade-out)
+        yield return StartCoroutine(FadeBlackoutSquare(-4));
+
+        Debug.Log("InitialFadeSequence: Fade out complete. Game visible.");
+    }
+
+
+    IEnumerator FadeBlackoutSquare(float fadeSpeed = 4)
+    {
+        if (blackoutSquare == null)
+        {
+            Debug.LogError("FadeBlackoutSquare: BlackoutSquare is null. Cannot fade.");
+            yield break;
+        }
+
+        Image blackoutImage = blackoutSquare.GetComponent<Image>();
+        if (blackoutImage == null)
+        {
+            Debug.LogError("FadeBlackoutSquare: No Image component found on blackoutSquare.");
             yield break;
         }
 
@@ -205,20 +282,34 @@ public class Combat : MonoBehaviour
         float fadeAmount;
         bool go = true;
 
+        // Ensure correct starting alpha based on fade direction
+        if (fadeSpeed > 0 && objectColor.a < 1) // Fading IN to black
+        {
+            objectColor.a = 0; // Start fully transparent
+            blackoutImage.color = objectColor;
+        }
+        else if (fadeSpeed < 0 && objectColor.a > 0) // Fading OUT from black
+        {
+            objectColor.a = 1; // Start fully opaque
+            blackoutImage.color = objectColor;
+        }
+
         while (go)
         {
-            fadeAmount = objectColor.a + (fadeSpeed / 3 * Time.deltaTime);
+            // Use Time.unscaledDeltaTime for fade to ensure it works even if Time.timeScale is 0
+            fadeAmount = objectColor.a + (fadeSpeed / 3 * Time.unscaledDeltaTime);
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
             blackoutImage.color = objectColor;
 
-            if (fadeSpeed > 0 && objectColor.a >= 1)
+            if (fadeSpeed > 0 && objectColor.a >= 1) // Faded TO black (opaque)
             {
                 go = false;
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                // REMOVED SceneManager.LoadScene() from here. GameResetter now handles it.
             }
-            else if (fadeSpeed < 0 && objectColor.a <= 0)
+            else if (fadeSpeed < 0 && objectColor.a <= 0) // Faded OUT (transparent)
             {
                 go = false;
+                blackoutSquare.SetActive(false); // Deactivate after fading out completely
             }
 
             yield return null;

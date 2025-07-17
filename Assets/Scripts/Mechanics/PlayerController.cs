@@ -6,6 +6,7 @@ using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
 using TMPro; // Needed for TextMeshProUGUI
+using UnityEngine.SceneManagement; // Needed for SceneManager.LoadScene (keep this one!)
 
 namespace Platformer.Mechanics
 {
@@ -36,7 +37,7 @@ namespace Platformer.Mechanics
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
-        Combat combat; 
+        public Combat combat; // FIXED: Changed to public
 
         public Transform spawnPoint;
         GameManager gameManager; // Reference to your GameManager
@@ -45,9 +46,9 @@ namespace Platformer.Mechanics
         public Transform landedVFXTransform;
 
         // These are your references to the unique victory screen UI panels/GameObjects
-        public GameObject victory1; 
-        public GameObject victory2; 
-        public GameObject victory3; 
+        public GameObject victory1;
+        public GameObject victory2;
+        public GameObject victory3;
 
         // References for common UI elements (Token Icon, Vial Count Text, Restart Message Text)
         public TextMeshProUGUI commonVialCountText;
@@ -72,7 +73,7 @@ namespace Platformer.Mechanics
             // Hide the common UI elements initially as well.
             if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(false);
             if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(false);
-            if (commonTokenIcon != null) commonTokenIcon.SetActive(false); 
+            if (commonTokenIcon != null) commonTokenIcon.SetActive(false);
         }
 
         new private void Start() {
@@ -130,7 +131,7 @@ namespace Platformer.Mechanics
             // ACTIVATE COMMON UI ELEMENTS (these were hidden at Awake)
             if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(true);
             if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(true);
-            if (commonTokenIcon != null) commonTokenIcon.SetActive(true); 
+            if (commonTokenIcon != null) commonTokenIcon.SetActive(true);
 
             // Update common text elements
             if (commonVialCountText != null) {
@@ -147,26 +148,33 @@ namespace Platformer.Mechanics
                     // Reset to default color (e.g., white) if not a perfect score.
                     // If your default text color in TextMeshPro is not white, change Color.white here
                     // to match your default, or create a public Color variable for it.
-                    commonVialCountText.color = Color.white; 
+                    commonVialCountText.color = Color.white;
                     Debug.Log("Partial collection. Vial count text set to default color.");
                 }
             } else { Debug.LogWarning("Common Vial Count Text not assigned in Inspector!"); }
-            
+
             if (commonRestartMessageText != null) {
                 commonRestartMessageText.text = "CLICK ANYWHERE TO RESTART";
             } else { Debug.LogWarning("Common Restart Message Text not assigned in Inspector!"); }
-            
+
             // Activate the appropriate unique victory panel based on score thresholds
             if (score > 43) {
-                if (victory3 != null) victory3.SetActive(true);
-                Debug.Log("Activated Victory Screen 3 (Score > 43)");
-            } else if (score > 32) { 
-                if (victory2 != null) victory2.SetActive(true);
-                Debug.Log("Activated Victory Screen 2 (Score 33-43)");
-            } else { 
-                if (victory1 != null) victory1.SetActive(true);
-                Debug.Log("Activated Victory Screen 1 (Score 0-32)");
+                if (victory3 != null) {
+                    victory3.SetActive(true);
+                    Debug.Log("Activated Victory Screen 3 (Score > 43)");
+                }
+            } else if (score > 32) {
+                if (victory2 != null) {
+                    victory2.SetActive(true);
+                    Debug.Log("Activated Victory Screen 2 (Score 33-43)");
+                }
+            } else {
+                if (victory1 != null) {
+                    victory1.SetActive(true);
+                    Debug.Log("Activated Victory Screen 1 (Score 0-32)");
+                }
             }
+            // NO NEW CODE HERE FOR UI CLICKS! That will be handled in the Editor now.
         }
 
         public void LandedVFX(){
@@ -177,6 +185,8 @@ namespace Platformer.Mechanics
         public void loseUnsavedPoints(){
             gameManager.unsavedScore = 0;
         }
+
+        // The SetupRestartClick method has been removed from here!
 
         void UpdateJumpState()
         {
