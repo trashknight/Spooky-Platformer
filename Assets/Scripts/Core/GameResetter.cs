@@ -105,45 +105,18 @@ namespace Platformer.Core
             // Add additional dynamic cleanup here as needed
         }
 
-        IEnumerator FadeAndReloadSequence()
+        public IEnumerator FadeAndReloadSequence()
         {
-            PlayerController player = FindObjectOfType<PlayerController>();
-            Combat playerCombat = null;
+            Debug.Log("GameResetter: Skipping fade — already handled. Reloading scene...");
 
-            if (player != null)
-            {
-                playerCombat = player.GetComponent<Combat>();
-                if (playerCombat != null)
-                {
-                    Debug.Log("GameResetter: Starting fade to black.");
-                    yield return StartCoroutine(playerCombat.FadeToBlack(fadeDuration));
-                }
-                else
-                {
-                    Debug.LogError("GameResetter: No Combat on player.");
-                }
-            }
-            else
-            {
-                Debug.LogError("GameResetter: No PlayerController found.");
-            }
-
-            Debug.Log("GameResetter: Fade complete. Reloading scene...");
-
-            // ✅ NEW: Clean up persistent objects to ensure clean state
             if (MetaGameController.Instance != null)
-            {
                 Destroy(MetaGameController.Instance.gameObject);
-                Debug.Log("GameResetter: Destroyed MetaGameController before scene reload.");
-            }
 
             if (Instance != null)
-            {
-                Destroy(gameObject); // Destroys this GameResetter
-                Debug.Log("GameResetter: Destroyed GameResetter before scene reload.");
-            }
+                Destroy(gameObject);
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            yield return null;
         }
 
         public void TestClickReceived()
