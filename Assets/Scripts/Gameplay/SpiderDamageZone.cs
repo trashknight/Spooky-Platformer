@@ -8,8 +8,18 @@ public class SpiderDamageZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        TryApplyDamage(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryApplyDamage(other);
+    }
+
+    void TryApplyDamage(Collider2D other)
+    {
         Health playerHealth = other.GetComponent<Health>();
-        if (playerHealth != null)
+        if (playerHealth != null && playerHealth.IsAlive && !playerHealth.isInvincible)
         {
             playerHealth.TakeDamage(contactDamage, false);
 

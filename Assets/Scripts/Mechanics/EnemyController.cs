@@ -1,13 +1,11 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Platformer.Gameplay;
 using UnityEngine;
 using static Platformer.Core.Simulation;
 
 namespace Platformer.Mechanics
 {
-    /// <summary>
-    /// A simple controller for enemies. Provides movement control over a patrol path.
-    /// </summary>
     [RequireComponent(typeof(AnimationController), typeof(Collider2D))]
     public class EnemyController : MonoBehaviour
     {
@@ -32,29 +30,39 @@ namespace Platformer.Mechanics
 
         void OnCollisionEnter2D(Collision2D collision)
         {
+            HandleCollisionLogic(collision);
+        }
+
+        void OnCollisionStay2D(Collision2D collision)
+        {
+            HandleCollisionLogic(collision);
+        }
+
+        void HandleCollisionLogic(Collision2D collision)
+        {
             GameObject playerObj = collision.gameObject;
             var combat = playerObj.GetComponentInParent<Combat>();
             if (combat == null) return;
 
-            if (collision.collider.CompareTag("HitboxR") && combat.facingRight)
-            {
-                HandlePlayerCollision(playerObj);
-            }
-            else if (collision.collider.CompareTag("HitboxL") && !combat.facingRight)
-            {
-                HandlePlayerCollision(playerObj);
-            }
-        }
+            bool playerHitFromRight = collision.collider.CompareTag("HitboxR") && combat.facingRight;
+            bool playerHitFromLeft  = collision.collider.CompareTag("HitboxL") && !combat.facingRight;
 
-        void HandlePlayerCollision(GameObject playerObj)
-        {
-            var player = playerObj.GetComponentInParent<PlayerController>();
-            if (player != null)
+            if (playerHitFromRight || playerHitFromLeft)
             {
-                Debug.Log("EnemyController: Scheduling PlayerEnemyCollision event.");
-                var ev = Schedule<PlayerEnemyCollision>();
-                ev.player = player;
-                ev.enemy = this;
+                var player = playerObj.GetComponentInParent<PlayerController>();
+                var playerHealth = playerObj.GetComponentInParent<Health>();
+
+                if (player != null)
+                {
+                    var ev = Schedule<PlayerEnemyCollision>();
+                    ev.player = player;
+                    ev.enemy = this;
+                }
+
+                if (playerHealth != null && playerHealth.IsAlive && !playerHealth.isInvincible)
+                {
+                    playerHealth.TakeDamage(1, false);
+                }
             }
         }
 

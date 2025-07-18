@@ -15,6 +15,13 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
+            if (player == null || !player.health.IsAlive)
+            {
+                Debug.LogWarning("PlayerEnemyCollision: Player is null or already dead. Ignoring collision.");
+                return;
+            }
+
+            // False to prevent stomping
             var willHurtEnemy = false;
 
             if (willHurtEnemy)
@@ -22,7 +29,7 @@ namespace Platformer.Gameplay
                 var enemyHealth = enemy.GetComponent<Health>();
                 if (enemyHealth != null)
                 {
-                    enemyHealth.TakeDamage(1, true);
+                    enemyHealth.TakeDamage(1, false);
                     if (!enemyHealth.IsAlive)
                     {
                         Schedule<EnemyDeath>().enemy = enemy;
@@ -41,11 +48,7 @@ namespace Platformer.Gameplay
             }
             else
             {
-                var health = player.GetComponent<Health>();
-                if (health != null)
-                {
-                    health.TakeDamage(1, false);
-                }
+                // Optional: could add knockback or other logic here
             }
         }
     }

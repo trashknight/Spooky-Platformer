@@ -253,4 +253,15 @@ public class Combat : MonoBehaviour
         if (blackCanvas != null)
             blackCanvas.sortingOrder = 0;
     }
+
+    public void SetBlackoutInstant()
+    {
+        var image = blackoutSquare.GetComponent<Image>();
+        if (image != null)
+        {
+            var color = image.color;
+            color.a = 1f;
+            image.color = color;
+        }
+    }
 }

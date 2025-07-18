@@ -24,8 +24,13 @@ namespace Platformer.Gameplay
             {
                 Debug.Log("PlayerDeath.Execute(): Player is marked dead. Continuing death sequence...");
 
+                // Ensure menu won't show on reload
                 GameManager.Instance.showMenu = false;
 
+                // Start blackout early in case the menu flashes
+                combat.SetBlackoutInstant(); // NEW: Force blackout immediately
+
+                // Standard death logic
                 model.virtualCamera.m_Follow = null;
                 model.virtualCamera.m_LookAt = null;
                 player.controlEnabled = false;
@@ -59,7 +64,7 @@ namespace Platformer.Gameplay
         IEnumerator DeathFadeThenReload(Combat combat)
         {
             Debug.Log("PlayerDeath.DeathFadeThenReload() coroutine started.");
-            yield return combat.FadeToBlack(1.5f);
+            yield return combat.FadeToBlack(1.5f); // Smooth fade to cover reset
             Debug.Log("Fade complete. Now reloading via GameResetter.");
 
             if (GameResetter.Instance != null)
