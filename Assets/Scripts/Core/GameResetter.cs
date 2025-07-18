@@ -78,6 +78,14 @@ namespace Platformer.Core
                 Debug.LogError("GameResetter: GameManager not found!");
             }
 
+            // ✅ Destroy persistent music object if it exists
+            var music = GameObject.FindObjectOfType<PersistentMusic>();
+            if (music != null)
+            {
+                Destroy(music.gameObject);
+                Debug.Log("GameResetter: Destroyed PersistentMusic.");
+            }
+
             CleanUpDynamicObjects();
 
             EventSystem currentEventSystemBeforeReload = FindObjectOfType<EventSystem>();
