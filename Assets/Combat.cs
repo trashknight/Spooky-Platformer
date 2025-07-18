@@ -251,7 +251,7 @@ public class Combat : MonoBehaviour
 
         // 🔁 Reset canvas sorting order after fade
         if (blackCanvas != null)
-            blackCanvas.sortingOrder = 0;
+            blackCanvas.sortingOrder = 900;
     }
 
     public void SetBlackoutInstant()
