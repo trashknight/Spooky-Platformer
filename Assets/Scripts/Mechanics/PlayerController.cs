@@ -45,6 +45,8 @@ namespace Platformer.Mechanics
         public float landedVFXDuration = 2f;
         public Transform landedVFXTransform;
 
+        public GameObject respawnVFX; // ✅ NEW: Reference to dirt particle prefab
+
         // These are your references to the unique victory screen UI panels/GameObjects
         public GameObject victory1;
         public GameObject victory2;
@@ -62,7 +64,7 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
-            combat = GetComponent<Combat>(); // Corrected: Should be just GetComponent<Combat>()
+            combat = GetComponent<Combat>();
             gameManager = FindObjectOfType<GameManager>();
 
             // Ensure ALL victory-related UI elements are hidden at the start of the scene.
@@ -76,7 +78,8 @@ namespace Platformer.Mechanics
             if (commonTokenIcon != null) commonTokenIcon.SetActive(false);
         }
 
-        new private void Start() {
+        new private void Start()
+        {
             Simulation.Schedule<PlayerSpawn>(0);
         }
 
@@ -85,7 +88,8 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) {
+                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+                {
                     if ((jumpState == JumpState.Grounded) || (jumpState == JumpState.Landed))
                         Schedule<PlayerJumped>().player = this;
                     jumpState = JumpState.PrepareToJump;
@@ -106,86 +110,97 @@ namespace Platformer.Mechanics
 
         void UpdateFacingDirection()
         {
-            if (move.x > 0.01f) {
+            if (move.x > 0.01f)
+            {
                 spriteRenderer.flipX = false;
                 combat.facingRight = true;
             }
-            else if (move.x < -0.01f) {
+            else if (move.x < -0.01f)
+            {
                 spriteRenderer.flipX = true;
                 combat.facingRight = false;
             }
         }
 
-        public void victory() {
+        public void victory()
+        {
             int score = gameManager.unsavedScore + gameManager.savedScore;
-            int totalVialsInLevel = 60; // IMPORTANT: Adjust this if your total number of vials is different!
+            int totalVialsInLevel = 60;
 
             Debug.Log($"Player collected a total of {score} vials. Determining victory screen...");
 
-            // First, hide all unique victory panels.
             if (victory1 != null) victory1.SetActive(false);
             if (victory2 != null) victory2.SetActive(false);
             if (victory3 != null) victory3.SetActive(false);
 
-            // ACTIVATE COMMON UI ELEMENTS (these were hidden at Awake)
             if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(true);
             if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(true);
             if (commonTokenIcon != null) commonTokenIcon.SetActive(true);
 
-            // Update common text elements
-            if (commonVialCountText != null) {
+            if (commonVialCountText != null)
+            {
                 commonVialCountText.text = $"COLLECTED: {score}/{totalVialsInLevel}";
-
-                // Change text color if 60/60
                 if (score == totalVialsInLevel)
                 {
-                    commonVialCountText.color = Color.yellow; // Set text color to yellow for perfect score
+                    commonVialCountText.color = Color.yellow;
                     Debug.Log("Full collection! Vial count text set to yellow.");
                 }
                 else
                 {
-                    // Reset to default color (e.g., white) if not a perfect score.
-                    // If your default text color in TextMeshPro is not white, change Color.white here
-                    // to match your default, or create a public Color variable for it.
                     commonVialCountText.color = Color.white;
                     Debug.Log("Partial collection. Vial count text set to default color.");
                 }
-            } else { Debug.LogWarning("Common Vial Count Text not assigned in Inspector!"); }
+            }
+            else
+            {
+                Debug.LogWarning("Common Vial Count Text not assigned in Inspector!");
+            }
 
-            if (commonRestartMessageText != null) {
+            if (commonRestartMessageText != null)
+            {
                 commonRestartMessageText.text = "CLICK ANYWHERE TO RESTART";
-            } else { Debug.LogWarning("Common Restart Message Text not assigned in Inspector!"); }
+            }
+            else
+            {
+                Debug.LogWarning("Common Restart Message Text not assigned in Inspector!");
+            }
 
-            // Activate the appropriate unique victory panel based on score thresholds
-            if (score > 46) {
-                if (victory3 != null) {
+            if (score > 46)
+            {
+                if (victory3 != null)
+                {
                     victory3.SetActive(true);
                     Debug.Log("Activated Victory Screen 3 (Score > 43)");
                 }
-            } else if (score > 36) {
-                if (victory2 != null) {
+            }
+            else if (score > 36)
+            {
+                if (victory2 != null)
+                {
                     victory2.SetActive(true);
                     Debug.Log("Activated Victory Screen 2 (Score 33-43)");
                 }
-            } else {
-                if (victory1 != null) {
+            }
+            else
+            {
+                if (victory1 != null)
+                {
                     victory1.SetActive(true);
                     Debug.Log("Activated Victory Screen 1 (Score 0-32)");
                 }
             }
-            // NO NEW CODE HERE FOR UI CLICKS! That will be handled in the Editor now.
         }
 
-        public void LandedVFX(){
+        public void LandedVFX()
+        {
             GameObject landed = Instantiate(landedVFX, landedVFXTransform.position, landedVFXTransform.rotation);
             Destroy(landed, landedVFXDuration);
         }
 
-        public void loseUnsavedPoints(){
+        public void loseUnsavedPoints()
+        {
             gameManager.unsavedScore = 0;
         }
-
-        // The SetupRestartClick method has been removed from here!
 
         void UpdateJumpState()
         {
@@ -236,9 +251,12 @@ namespace Platformer.Mechanics
 
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
-            if ((IsGrounded) && ((Mathf.Abs(velocity.x) / maxSpeed) != 0)) {
+            if ((IsGrounded) && ((Mathf.Abs(velocity.x) / maxSpeed) != 0))
+            {
                 walkingParticles.SetActive(true);
-            } else {
+            }
+            else
+            {
                 walkingParticles.SetActive(false);
             }
 

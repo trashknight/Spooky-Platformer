@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace Platformer.Gameplay
 {
-    /// <summary>
-    /// Fired when the player is spawned after dying.
-    /// </summary>
     public class PlayerSpawn : Simulation.Event<PlayerSpawn>
     {
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
@@ -28,7 +25,9 @@ namespace Platformer.Gameplay
             var sprite = playerObj.GetComponent<SpriteRenderer>();
             var gameManager = GameManager.Instance;
 
-            // ✅ Reassign checkpoint spawnPoint based on saved spawnPointId
+            Transform particleSpawnPoint = null;
+
+            // --- Determine correct spawn point based on checkpoint ---
             SpawnActivatorTrigger[] checkpoints = GameObject.FindObjectsOfType<SpawnActivatorTrigger>();
             foreach (var checkpoint in checkpoints)
             {
@@ -44,27 +43,61 @@ namespace Platformer.Gameplay
                         controller.spawnPoint = checkpoint.transform;
                         Debug.LogWarning($"PlayerSpawn: No VFXpoint assigned for checkpoint {gameManager.spawnPointId}, using root transform.");
                     }
+
+                    // Try to find VFXOnlyPoint as child of checkpoint's parent
+                    if (checkpoint.VFXpoint != null && checkpoint.VFXpoint.parent != null)
+                    {
+                        Transform vfxChild = checkpoint.VFXpoint.parent.Find("VFXOnlyPoint");
+                        if (vfxChild != null)
+                        {
+                            particleSpawnPoint = vfxChild;
+                            Debug.Log("PlayerSpawn: Found VFXOnlyPoint under checkpoint parent.");
+                        }
+                    }
+
                     break;
                 }
             }
 
+            // --- Fallback to original spawn point ---
             if (controller.spawnPoint == null)
             {
-                Debug.LogWarning("PlayerSpawn: No matching checkpoint found — falling back to initial spawn point.");
-                controller.spawnPoint = playerObj.transform; // fallback
+                Debug.LogWarning("PlayerSpawn: No checkpoint matched. Falling back to original spawn point.");
+                controller.spawnPoint = playerObj.transform;
             }
 
-            // Disable combat during respawn
-            combat.attackEnabled = false;
+            if (particleSpawnPoint == null)
+            {
+                // Try to find the tagged fallback VFX point in the scene
+                GameObject taggedVFX = GameObject.FindGameObjectWithTag("InitialSpawnVFX");
+                if (taggedVFX != null)
+                {
+                    particleSpawnPoint = taggedVFX.transform;
+                    Debug.Log("PlayerSpawn: Found fallback InitialSpawnVFX by tag.");
+                }
+                else
+                {
+                    particleSpawnPoint = controller.spawnPoint;
+                    Debug.Log("PlayerSpawn: No tagged VFX fallback found. Using spawnPoint for particle.");
+                }
+            }
 
-            // Move player to the correct spawn point
+            // --- Execute Spawn ---
+            combat.attackEnabled = false;
             player.Teleport(controller.spawnPoint.position);
+
+            if (player.respawnVFX != null && particleSpawnPoint != null)
+            {
+                Debug.Log($"Spawning particle at: {particleSpawnPoint.position}");
+                GameObject.Instantiate(player.respawnVFX, particleSpawnPoint.position, Quaternion.identity);
+            }
+
             player.animator.SetBool("Spawning", true);
             player.health.IsAlive = true;
             player.collider2d.enabled = true;
             player.controlEnabled = false;
 
-            if (!gameManager.showMenu && player.audioSource && player.respawnAudio)
+            if (!GameManager.Instance.showMenu && player.audioSource && player.respawnAudio)
                 player.audioSource.PlayOneShot(player.respawnAudio);
 
             player.health.Reset();
@@ -74,10 +107,7 @@ namespace Platformer.Gameplay
             model.virtualCamera.m_Follow = player.transform;
             model.virtualCamera.m_LookAt = player.transform;
 
-            // Fade in after player is moved and camera is tracking
             combat.FadeInAfterRespawn(0.05f);
-
-            // Re-enable control after short delay
             Simulation.Schedule<EnablePlayerInput>(2.1f);
         }
     }

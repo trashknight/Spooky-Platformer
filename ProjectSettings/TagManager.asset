@@ -12,6 +12,7 @@ TagManager:
   - Ground
   - Bottle
   - GameplayCanvas
+  - InitialSpawnVFX
   layers:
   - Default
   - TransparentFX
@@ -48,4 +49,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Dirt
+    uniqueID: 3732294063
+    locked: 0
+  - name: Ground
+    uniqueID: 4222000251
+    locked: 0
+  - name: Enemies
+    uniqueID: 3648922479
     locked: 0
