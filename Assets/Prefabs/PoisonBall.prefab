@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5113550438983810596}
   - component: {fileID: 7664936670480288517}
   - component: {fileID: 3098762945385853820}
+  - component: {fileID: -832361072924951357}
   m_Layer: 9
   m_Name: PoisonBall
   m_TagString: Untagged
@@ -250,3 +251,14 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!210 &-832361072924951357
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2867619810013110196}
+  m_Enabled: 1
+  m_SortingLayerID: -646044817
+  m_SortingLayer: 3
+  m_SortingOrder: 0
