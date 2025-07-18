@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Platformer.Gameplay;
 using UnityEngine;
 using static Platformer.Core.Simulation;
@@ -35,33 +34,27 @@ namespace Platformer.Mechanics
         {
             GameObject playerObj = collision.gameObject;
             var combat = playerObj.GetComponentInParent<Combat>();
-            if(collision.collider.tag == "HitboxR") {
-               // check facing right
-               if (combat.facingRight) {
-                   HandlePlayerCollision(playerObj);
-               }
+            if (combat == null) return;
+
+            if (collision.collider.CompareTag("HitboxR") && combat.facingRight)
+            {
+                HandlePlayerCollision(playerObj);
             }
-            if(collision.collider.tag == "HitboxL") {
-               // check facing left
-               if (!combat.facingRight) {
-                   HandlePlayerCollision(playerObj);
-               }
+            else if (collision.collider.CompareTag("HitboxL") && !combat.facingRight)
+            {
+                HandlePlayerCollision(playerObj);
             }
         }
 
-        void HandlePlayerCollision(GameObject playerObj) {
+        void HandlePlayerCollision(GameObject playerObj)
+        {
             var player = playerObj.GetComponentInParent<PlayerController>();
-            var playerHealth = playerObj.GetComponentInParent<Health>();
-            var combat = playerObj.GetComponentInParent<Combat>();
             if (player != null)
             {
-                // combat.DisableAttack();
+                Debug.Log("EnemyController: Scheduling PlayerEnemyCollision event.");
                 var ev = Schedule<PlayerEnemyCollision>();
                 ev.player = player;
                 ev.enemy = this;
-            }
-            if (playerHealth != null) {
-                playerHealth.Decrement();
             }
         }
 
@@ -73,6 +66,5 @@ namespace Platformer.Mechanics
                 control.move.x = Mathf.Clamp(mover.Position.x - transform.position.x, -1, 1);
             }
         }
-
     }
 }

@@ -36,7 +36,7 @@ public class PoisonProjectile : MonoBehaviour
         Health playerHealth = collision.GetComponent<Health>();
         if (playerHealth != null)
         {
-            playerHealth.Decrement(); // Deal damage
+            playerHealth.TakeDamage(1, false);
 
             if (poisonHitSound != null && audioSource != null)
                 audioSource.PlayOneShot(poisonHitSound);

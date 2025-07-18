@@ -7,9 +7,6 @@ using UnityEngine.SceneManagement;
 
 namespace Platformer.Gameplay
 {
-    /// <summary>
-    /// Fired when the player has died.
-    /// </summary>
     public class PlayerDeath : Simulation.Event<PlayerDeath>
     {
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
@@ -18,18 +15,17 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
-            combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
-            Debug.Log("Executing player death");
+            Debug.Log("PlayerDeath.Execute() started.");
 
-            combat.attackEnabled = false;
+            combat = GameObject.FindGameObjectWithTag("Player").GetComponent<Combat>();
             var player = model.player;
 
-            if (player.health.IsAlive)
+            if (!player.health.IsAlive)
             {
-                GameManager.Instance.showMenu = false; // ✅ Prevent menu after reload
+                Debug.Log("PlayerDeath.Execute(): Player is marked dead. Continuing death sequence...");
 
-                player.health.IsAlive = false;
-                player.health.Die();
+                GameManager.Instance.showMenu = false;
+
                 model.virtualCamera.m_Follow = null;
                 model.virtualCamera.m_LookAt = null;
                 player.controlEnabled = false;
@@ -44,21 +40,28 @@ namespace Platformer.Gameplay
                 if (gameController)
                     gameController.enabled = false;
 
-                // ✅ START coroutine for fade + reload
                 if (combat != null)
                 {
+                    Debug.Log("PlayerDeath.Execute(): Starting fade coroutine.");
                     player.StartCoroutine(DeathFadeThenReload(combat));
                 }
+                else
+                {
+                    Debug.LogError("PlayerDeath.Execute(): Combat reference is null!");
+                }
+            }
+            else
+            {
+                Debug.Log("PlayerDeath.Execute(): Called while still alive — ignoring.");
             }
         }
 
-        // ✅ ADD THIS COROUTINE BELOW Execute()
         IEnumerator DeathFadeThenReload(Combat combat)
         {
-            Debug.Log("PlayerDeath: Starting fade to black...");
+            Debug.Log("PlayerDeath.DeathFadeThenReload() coroutine started.");
             yield return combat.FadeToBlack(1.5f);
+            Debug.Log("Fade complete. Now reloading via GameResetter.");
 
-            Debug.Log("PlayerDeath: Fade complete. Reloading scene...");
             if (GameResetter.Instance != null)
             {
                 GameResetter.Instance.StartCoroutine(GameResetter.Instance.FadeAndReloadSequence());

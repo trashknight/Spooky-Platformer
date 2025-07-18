@@ -6,14 +6,8 @@ using static Platformer.Core.Simulation;
 
 namespace Platformer.Gameplay
 {
-
-    /// <summary>
-    /// Fired when a Player collides with an Enemy.
-    /// </summary>
-    /// <typeparam name="EnemyCollision"></typeparam>
     public class PlayerEnemyCollision : Simulation.Event<PlayerEnemyCollision>
     {
-        // This does nothing currently
         public EnemyController enemy;
         public PlayerController player;
 
@@ -21,8 +15,6 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
-            //var willHurtEnemy = player.Bounds.center.y >= enemy.Bounds.max.y;
-            // i want this FALSE so that u cant jump on the him
             var willHurtEnemy = false;
 
             if (willHurtEnemy)
@@ -30,7 +22,7 @@ namespace Platformer.Gameplay
                 var enemyHealth = enemy.GetComponent<Health>();
                 if (enemyHealth != null)
                 {
-                    enemyHealth.Decrement();
+                    enemyHealth.TakeDamage(1, true);
                     if (!enemyHealth.IsAlive)
                     {
                         Schedule<EnemyDeath>().enemy = enemy;
@@ -49,7 +41,11 @@ namespace Platformer.Gameplay
             }
             else
             {
-                //Schedule<PlayerDeath>();
+                var health = player.GetComponent<Health>();
+                if (health != null)
+                {
+                    health.TakeDamage(1, false);
+                }
             }
         }
     }

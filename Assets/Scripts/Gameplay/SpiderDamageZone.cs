@@ -11,7 +11,7 @@ public class SpiderDamageZone : MonoBehaviour
         Health playerHealth = other.GetComponent<Health>();
         if (playerHealth != null)
         {
-            playerHealth.Decrement();
+            playerHealth.TakeDamage(contactDamage, false);
 
             if (hurtPlayerSound != null)
             {

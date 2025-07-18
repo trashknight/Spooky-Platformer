@@ -77,7 +77,6 @@ namespace Platformer.Mechanics
         }
 
         new private void Start() {
-            spawnPoint = health.spawnpoints[gameManager.spawnPointId];
             Simulation.Schedule<PlayerSpawn>(0);
         }
 
