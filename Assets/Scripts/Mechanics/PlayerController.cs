@@ -157,12 +157,12 @@ namespace Platformer.Mechanics
             } else { Debug.LogWarning("Common Restart Message Text not assigned in Inspector!"); }
 
             // Activate the appropriate unique victory panel based on score thresholds
-            if (score > 43) {
+            if (score > 46) {
                 if (victory3 != null) {
                     victory3.SetActive(true);
                     Debug.Log("Activated Victory Screen 3 (Score > 43)");
                 }
-            } else if (score > 32) {
+            } else if (score > 36) {
                 if (victory2 != null) {
                     victory2.SetActive(true);
                     Debug.Log("Activated Victory Screen 2 (Score 33-43)");

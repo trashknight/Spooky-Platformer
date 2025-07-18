@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Platformer.Mechanics; // Needed for PlayerController and Combat
+using Platformer.Mechanics;
+using UnityEngine.EventSystems; // Required for clearing selection
 
 namespace Platformer.UI
 {
@@ -14,7 +15,8 @@ namespace Platformer.UI
         void Start()
         {
             metaGameController = FindObjectOfType<MetaGameController>();
-            if (metaGameController == null) Debug.LogError("MainUIController: MetaGameController not found in scene!");
+            if (metaGameController == null)
+                Debug.LogError("MainUIController: MetaGameController not found in scene!");
             Debug.Log($"MainUIController: Start() called in scene '{SceneManager.GetActiveScene().name}'.");
         }
 
@@ -34,38 +36,76 @@ namespace Platformer.UI
                     var active = i == index;
                     var g = panels[i];
 
-                    if (g == null) {
+                    if (g == null)
+                    {
                         Debug.LogWarning($"MainUIController: Panel at index {i} is NULL in the panels array! Please assign all panels.");
                         continue;
                     }
+
                     if (g.activeSelf != active) g.SetActive(active);
                     Debug.Log($"MainUIController: Panel {g.name} set active: {active}.");
                 }
-            } else {
+            }
+            else
+            {
                 Debug.LogWarning($"MainUIController: SetActivePanel({index}) called with invalid index. No panel activated.");
             }
         }
 
-        public void StartGame() {
+        public void ToggleCreditsPanel()
+        {
+            Debug.Log("MainUIController: ToggleCreditsPanel() called.");
+
+            // Find currently active panel
+            for (int i = 0; i < panels.Length; i++)
+            {
+                if (panels[i] != null && panels[i].activeSelf)
+                {
+                    if (i == 1)
+                    {
+                        Debug.Log("Credits panel is currently active — switching to Main Menu.");
+                        SetActivePanel(0);
+                    }
+                    else
+                    {
+                        Debug.Log("Switching to Credits panel.");
+                        SetActivePanel(1);
+                    }
+
+                    // ✅ FIX: Deselect UI so hover state works again
+                    EventSystem.current.SetSelectedGameObject(null);
+                    return;
+                }
+            }
+
+            // No panel was active? Default to showing credits
+            Debug.Log("No panels were active — defaulting to Credits panel.");
+            SetActivePanel(1);
+
+            // Just in case
+            EventSystem.current.SetSelectedGameObject(null);
+        }
+
+        public void StartGame()
+        {
             Debug.Log("MainUIController: StartGame() called from button. Requesting MetaGameController to hide Main Menu and trigger initial fade.");
 
-            // This calls MetaGameController to hide the main menu and show gameplay UI.
-            // We do this BEFORE triggering the fade so Time.timeScale becomes 1 immediately.
             if (metaGameController != null)
             {
                 metaGameController.ToggleMainMenu(show: false);
-            } else {
+            }
+            else
+            {
                 Debug.LogError("MainUIController: MetaGameController not assigned or found! Cannot start game.");
             }
 
-            // Find the player's Combat script to trigger the initial game fade
             PlayerController player = FindObjectOfType<PlayerController>();
             if (player != null)
             {
                 Combat playerCombat = player.GetComponent<Combat>();
                 if (playerCombat != null)
                 {
-                    playerCombat.TriggerInitialGameFade(); // NEW: Trigger the fade-in-from-black cinematic
+                    playerCombat.TriggerInitialGameFade();
                 }
                 else
                 {
