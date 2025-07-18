@@ -64,7 +64,7 @@ namespace Platformer.Gameplay
             player.collider2d.enabled = true;
             player.controlEnabled = false;
 
-            if (player.audioSource && player.respawnAudio)
+            if (!gameManager.showMenu && player.audioSource && player.respawnAudio)
                 player.audioSource.PlayOneShot(player.respawnAudio);
 
             player.health.Reset();
