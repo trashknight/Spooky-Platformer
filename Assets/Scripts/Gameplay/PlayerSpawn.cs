@@ -26,12 +26,32 @@ namespace Platformer.Gameplay
             var controller = playerObj.GetComponent<PlayerController>();
             var combat = playerObj.GetComponent<Combat>();
             var sprite = playerObj.GetComponent<SpriteRenderer>();
-            var gameManager = GameObject.FindObjectOfType<GameManager>();
+            var gameManager = GameManager.Instance;
 
-            if (controller == null || controller.spawnPoint == null)
+            // ✅ Reassign checkpoint spawnPoint based on saved spawnPointId
+            SpawnActivatorTrigger[] checkpoints = GameObject.FindObjectsOfType<SpawnActivatorTrigger>();
+            foreach (var checkpoint in checkpoints)
             {
-                Debug.LogError("PlayerSpawn: PlayerController or spawnPoint is missing.");
-                return;
+                if (checkpoint.spawnPointId == gameManager.spawnPointId)
+                {
+                    if (checkpoint.VFXpoint != null)
+                    {
+                        controller.spawnPoint = checkpoint.VFXpoint;
+                        Debug.Log($"PlayerSpawn: Found spawn marker for spawnPointId {gameManager.spawnPointId}.");
+                    }
+                    else
+                    {
+                        controller.spawnPoint = checkpoint.transform;
+                        Debug.LogWarning($"PlayerSpawn: No VFXpoint assigned for checkpoint {gameManager.spawnPointId}, using root transform.");
+                    }
+                    break;
+                }
+            }
+
+            if (controller.spawnPoint == null)
+            {
+                Debug.LogWarning("PlayerSpawn: No matching checkpoint found — falling back to initial spawn point.");
+                controller.spawnPoint = playerObj.transform; // fallback
             }
 
             // Disable combat during respawn
@@ -54,10 +74,10 @@ namespace Platformer.Gameplay
             model.virtualCamera.m_Follow = player.transform;
             model.virtualCamera.m_LookAt = player.transform;
 
-            // ✅ NEW: Fade in after player is moved and camera is tracking
-            combat.FadeInAfterRespawn(0.05f); // Adjust delay if needed
+            // Fade in after player is moved and camera is tracking
+            combat.FadeInAfterRespawn(0.05f);
 
-            // Re-enable control after a short delay
+            // Re-enable control after short delay
             Simulation.Schedule<EnablePlayerInput>(2.1f);
         }
     }
