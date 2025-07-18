@@ -54,6 +54,9 @@ namespace Platformer.Gameplay
             model.virtualCamera.m_Follow = player.transform;
             model.virtualCamera.m_LookAt = player.transform;
 
+            // ✅ NEW: Fade in after player is moved and camera is tracking
+            combat.FadeInAfterRespawn(0.05f); // Adjust delay if needed
+
             // Re-enable control after a short delay
             Simulation.Schedule<EnablePlayerInput>(2.1f);
         }

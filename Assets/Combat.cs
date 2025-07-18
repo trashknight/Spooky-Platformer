@@ -38,8 +38,8 @@ public class Combat : MonoBehaviour
             Image blackoutImage = blackoutSquare.GetComponent<Image>();
             if (blackoutImage != null)
             {
-                blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 0);
-                blackoutSquare.SetActive(false);
+                blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 1);
+                blackoutSquare.SetActive(true);
             }
             else
             {
@@ -211,5 +211,46 @@ public class Combat : MonoBehaviour
 
         if (fadeSpeed < 0)
             blackoutSquare.SetActive(false);
+    }
+
+    public void FadeInAfterRespawn(float delaySeconds = 0f)
+    {
+        StartCoroutine(FadeInAfterDelay(delaySeconds));
+    }
+
+    private IEnumerator FadeInAfterDelay(float delay)
+    {
+        if (blackoutSquare == null) yield break;
+
+        // 🛠️ TEMPORARILY raise canvas sorting order above menu
+        Canvas blackCanvas = blackoutSquare.GetComponentInParent<Canvas>();
+        if (blackCanvas != null)
+            blackCanvas.sortingOrder = 999;
+
+        yield return new WaitForSecondsRealtime(delay);
+        yield return new WaitForEndOfFrame();
+
+        Image blackoutImage = blackoutSquare.GetComponent<Image>();
+        if (blackoutImage == null) yield break;
+
+        blackoutSquare.SetActive(true);
+        Color objectColor = blackoutImage.color;
+        objectColor.a = 1;
+        blackoutImage.color = objectColor;
+
+        float fadeSpeed = -4f;
+        while (objectColor.a > 0f)
+        {
+            float fadeAmount = objectColor.a + (fadeSpeed / 3 * Time.unscaledDeltaTime);
+            objectColor.a = Mathf.Clamp01(fadeAmount);
+            blackoutImage.color = objectColor;
+            yield return null;
+        }
+
+        blackoutSquare.SetActive(false);
+
+        // 🔁 Reset canvas sorting order after fade
+        if (blackCanvas != null)
+            blackCanvas.sortingOrder = 0;
     }
 }
