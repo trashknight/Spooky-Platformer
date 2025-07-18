@@ -1,12 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Platformer.Mechanics
 {
-    /// <summary>
-    /// This class contains the data required for implementing token collection mechanics.
-    /// It does not perform animation of the token, this is handled in a batch by the 
-    /// TokenController in the scene.
-    /// </summary>
     [RequireComponent(typeof(Collider2D))]
     public class TokenInstance : MonoBehaviour
     {
@@ -21,11 +16,9 @@ namespace Platformer.Mechanics
         internal Sprite[] sprites = new Sprite[0];
         internal SpriteRenderer _renderer;
 
-        // Unique index which is assigned by the TokenController in a scene.
-        internal int tokenIndex = -1;
+        public int tokenIndex = -1;
         internal TokenController controller;
 
-        // Active frame in animation, updated by the controller.
         internal int frame = 0;
         internal bool collected = false;
 
@@ -39,6 +32,25 @@ namespace Platformer.Mechanics
 
             if (randomAnimationStartTime)
                 frame = Random.Range(0, sprites.Length);
+
+            Debug.Log($"[TokenInstance] Awake(): tokenIndex = {tokenIndex}, GameManager present: {gameManager != null}");
+        }
+
+        void Start()
+        {
+            Debug.Log($"[TokenInstance] Start(): tokenIndex = {tokenIndex}");
+
+            if (gameManager != null)
+            {
+                bool shouldDestroy = gameManager.ShouldDestroyToken(tokenIndex);
+                Debug.Log($"[TokenInstance] Checking if should destroy token {tokenIndex}: {shouldDestroy}");
+
+                if (shouldDestroy)
+                {
+                    Debug.Log($"[TokenInstance] Destroying token {tokenIndex} on load.");
+                    Destroy(gameObject);
+                }
+            }
         }
 
         void OnTriggerEnter2D(Collider2D other)
@@ -59,7 +71,11 @@ namespace Platformer.Mechanics
             collected = true;
 
             if (gameManager != null)
+            {
                 gameManager.unsavedScore += 1;
+                gameManager.collectedThisRun.Add(tokenIndex);
+                Debug.Log($"[TokenInstance] Token {tokenIndex} collected and added to collectedThisRun.");
+            }
 
             if (tokenCollectAudio != null)
                 AudioSource.PlayClipAtPoint(tokenCollectAudio, transform.position);

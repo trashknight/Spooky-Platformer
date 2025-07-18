@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Platformer.Mechanics;
 
@@ -26,12 +25,15 @@ public class SpawnActivatorTrigger : MonoBehaviour
             // ✅ Set new spawn point on the player controller
             controller.spawnPoint = this.transform;
 
-            // Score transfer logic
+            // ✅ Save tokens collected so far
+            gameManager.SaveCollectedTokensAtCheckpoint();
+
+            // ✅ Score transfer logic
             gameManager.spawnPointId = spawnPointId;
             gameManager.savedScore += gameManager.unsavedScore;
             gameManager.unsavedScore = 0;
 
-            // Visuals
+            // ✅ Visuals
             playerHealth.respawnVFXTransform = VFXpoint;
             spriteRenderer.sprite = activatedSprite;
 

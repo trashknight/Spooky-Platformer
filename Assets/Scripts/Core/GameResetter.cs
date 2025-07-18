@@ -70,6 +70,7 @@ namespace Platformer.Core
                 GameManager.Instance.savedScore = 0;
                 GameManager.Instance.spawnPointId = 0;
                 GameManager.Instance.showMenu = true;
+                GameManager.Instance.collectedTokenIndices.Clear(); // Clear all saved tokens on full reset
                 Debug.Log("GameResetter: GameManager reset.");
             }
             else
