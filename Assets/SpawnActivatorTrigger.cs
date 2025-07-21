@@ -22,16 +22,29 @@ public class SpawnActivatorTrigger : MonoBehaviour
 
         if (playerHealth != null && controller != null)
         {
-            // ✅ Set new spawn point on the player controller
+            bool isNewCheckpoint = (spawnPointId != gameManager.spawnPointId);
+
+            // ✅ Set new spawn point
             controller.spawnPoint = this.transform;
 
-            // ✅ Save tokens collected so far
+            // ✅ Save tokens
             gameManager.SaveCollectedTokensAtCheckpoint();
 
-            // ✅ Score transfer logic
+            // ✅ Score
             gameManager.spawnPointId = spawnPointId;
             gameManager.savedScore += gameManager.unsavedScore;
             gameManager.unsavedScore = 0;
+
+            // ✅ Restore health only if this is a new checkpoint
+            if (isNewCheckpoint)
+            {
+                playerHealth.Reset();
+                Debug.Log("SpawnActivatorTrigger: New checkpoint activated — health restored.");
+            }
+            else
+            {
+                Debug.Log("SpawnActivatorTrigger: Checkpoint already active — health not restored.");
+            }
 
             // ✅ Visuals
             playerHealth.respawnVFXTransform = VFXpoint;
