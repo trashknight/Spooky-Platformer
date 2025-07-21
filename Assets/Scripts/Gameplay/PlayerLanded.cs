@@ -4,22 +4,35 @@ using UnityEngine;
 
 namespace Platformer.Gameplay
 {
-    /// <summary>
-    /// Fired when the player character lands after being airborne.
-    /// </summary>
-    /// <typeparam name="PlayerLanded"></typeparam>
     public class PlayerLanded : Simulation.Event<PlayerLanded>
     {
         public PlayerController player;
 
-
-
         public override void Execute()
         {
-            player = GameObject.FindObjectOfType<PlayerController>();
-            player.LandedVFX();
-            if (player.audioSource && player.jumpAudio)
-                player.audioSource.PlayOneShot(player.landedAudio);
+            if (player == null)
+                player = GameObject.FindObjectOfType<PlayerController>();
+
+            if (player != null)
+            {
+                Debug.Log("PlayerLanded event triggered.");
+
+                player.LandedVFX();
+
+                if (player.audioSource && player.landedAudio)
+                {
+                    player.audioSource.PlayOneShot(player.landedAudio);
+                    Debug.Log("Played proper landedAudio!");
+                }
+                else
+                {
+                    Debug.LogWarning("Missing audioSource or landedAudio in PlayerController.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PlayerLanded: player is null.");
+            }
         }
     }
 }

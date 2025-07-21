@@ -60,6 +60,9 @@ namespace Platformer.Mechanics
         public float ceilingCheckRadius = 0.1f;
         public LayerMask whatIsGround;
 
+        private bool wasGroundedLastFrame = true;
+        private bool hasPlayedJumpAudio = false;
+
         void Awake()
         {
             health = GetComponent<Health>();
@@ -89,13 +92,17 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
-                if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+
+                bool jumpPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
+                bool jumpReleased = Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow);
+
+                if (jumpPressed && (jumpState == JumpState.Grounded || jumpState == JumpState.Landed))
                 {
-                    if ((jumpState == JumpState.Grounded) || (jumpState == JumpState.Landed))
-                        Schedule<PlayerJumped>().player = this;
+                    Debug.Log($"Jump button held. JumpState: {jumpState}, time: {Time.time}");
                     jumpState = JumpState.PrepareToJump;
                 }
-                else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
+
+                if (jumpReleased)
                 {
                     stopJump = true;
                     Schedule<PlayerStopJump>().player = this;
@@ -105,8 +112,16 @@ namespace Platformer.Mechanics
             {
                 move.x = 0;
             }
+
             UpdateJumpState();
             base.Update();
+
+            if (controlEnabled && !wasGroundedLastFrame && IsGrounded)
+            {
+                Schedule<PlayerLanded>().player = this;
+            }
+
+            wasGroundedLastFrame = IsGrounded;
         }
 
         void UpdateFacingDirection()
@@ -169,24 +184,28 @@ namespace Platformer.Mechanics
             switch (jumpState)
             {
                 case JumpState.PrepareToJump:
+                    Debug.Log("JumpState: PrepareToJump -> Jumping");
                     jumpState = JumpState.Jumping;
                     jump = true;
                     stopJump = false;
+                    hasPlayedJumpAudio = false;
                     break;
                 case JumpState.Jumping:
                     if (!IsGrounded)
                     {
+                        Debug.Log("JumpState: Jumping -> InFlight");
                         jumpState = JumpState.InFlight;
                     }
                     break;
                 case JumpState.InFlight:
                     if (IsGrounded)
                     {
-                        Schedule<PlayerLanded>().player = this;
+                        Debug.Log("JumpState: InFlight -> Landed");
                         jumpState = JumpState.Landed;
                     }
                     break;
                 case JumpState.Landed:
+                    Debug.Log("JumpState: Landed -> Grounded");
                     jumpState = JumpState.Grounded;
                     break;
             }
@@ -196,7 +215,17 @@ namespace Platformer.Mechanics
         {
             if (jump && IsGrounded)
             {
+                Debug.Log($"Jump triggered at time: {Time.time}, grounded: {IsGrounded}, velocity.y: {velocity.y}");
+                Schedule<PlayerJumped>().player = this;
                 velocity.y = jumpTakeOffSpeed * model.jumpModifier;
+
+                if (!hasPlayedJumpAudio && jumpAudio != null && controlEnabled)
+                {
+                    audioSource.PlayOneShot(jumpAudio);
+                    Debug.Log("Jump audio played from ComputeVelocity.");
+                    hasPlayedJumpAudio = true;
+                }
+
                 jump = false;
             }
             else if (stopJump)
@@ -205,12 +234,13 @@ namespace Platformer.Mechanics
                 if (velocity.y > 0)
                 {
                     velocity.y = velocity.y * model.jumpDeceleration;
+                    Debug.Log($"Stop jump early at time: {Time.time}, velocity reduced to: {velocity.y}");
                 }
             }
 
-            // Cancel jump if we hit our head on the ceiling
             if (velocity.y > 0 && Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, whatIsGround))
             {
+                Debug.Log("Head hit ceiling, cancelling upward velocity.");
                 velocity.y = 0;
             }
 
