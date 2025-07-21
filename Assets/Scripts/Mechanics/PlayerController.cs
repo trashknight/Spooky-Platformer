@@ -67,6 +67,10 @@ namespace Platformer.Mechanics
         private bool wasGroundedLastFrame = true;
         private bool hasPlayedJumpAudio = false;
 
+        // ✅ NEW grounded time tracker
+        private float groundedTime = 0f;
+        private const float minGroundedTimeBeforeJump = 0.05f; // Adjust if needed
+
         void Awake()
         {
             health = GetComponent<Health>();
@@ -100,9 +104,10 @@ namespace Platformer.Mechanics
                 bool jumpPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
                 bool jumpReleased = Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow);
 
-                if (jumpPressed && (jumpState == JumpState.Grounded || jumpState == JumpState.Landed))
+                // ✅ Only schedule a jump if grounded long enough
+                if (jumpPressed && (jumpState == JumpState.Grounded || jumpState == JumpState.Landed) && groundedTime > minGroundedTimeBeforeJump)
                 {
-                    Debug.Log($"Jump button held. JumpState: {jumpState}, time: {Time.time}");
+                    Debug.Log($"Jump initiated after {groundedTime:F3}s grounded. State: {jumpState}, time: {Time.time}");
                     jumpState = JumpState.PrepareToJump;
                 }
 
@@ -124,6 +129,12 @@ namespace Platformer.Mechanics
             {
                 Schedule<PlayerLanded>().player = this;
             }
+
+            // ✅ Track grounded time each frame
+            if (IsGrounded)
+                groundedTime += Time.deltaTime;
+            else
+                groundedTime = 0f;
 
             wasGroundedLastFrame = IsGrounded;
         }
@@ -188,7 +199,6 @@ namespace Platformer.Mechanics
             switch (jumpState)
             {
                 case JumpState.PrepareToJump:
-                    Debug.Log("JumpState: PrepareToJump -> Jumping");
                     jumpState = JumpState.Jumping;
                     jump = true;
                     stopJump = false;
@@ -197,19 +207,16 @@ namespace Platformer.Mechanics
                 case JumpState.Jumping:
                     if (!IsGrounded)
                     {
-                        Debug.Log("JumpState: Jumping -> InFlight");
                         jumpState = JumpState.InFlight;
                     }
                     break;
                 case JumpState.InFlight:
                     if (IsGrounded)
                     {
-                        Debug.Log("JumpState: InFlight -> Landed");
                         jumpState = JumpState.Landed;
                     }
                     break;
                 case JumpState.Landed:
-                    Debug.Log("JumpState: Landed -> Grounded");
                     jumpState = JumpState.Grounded;
                     break;
             }
@@ -219,14 +226,12 @@ namespace Platformer.Mechanics
         {
             if (jump && IsGrounded)
             {
-                Debug.Log($"Jump triggered at time: {Time.time}, grounded: {IsGrounded}, velocity.y: {velocity.y}");
                 Schedule<PlayerJumped>().player = this;
                 velocity.y = jumpTakeOffSpeed * model.jumpModifier;
 
                 if (!hasPlayedJumpAudio && jumpAudio != null && controlEnabled)
                 {
                     audioSource.PlayOneShot(jumpAudio);
-                    Debug.Log("Jump audio played from ComputeVelocity.");
                     hasPlayedJumpAudio = true;
                 }
 
@@ -238,13 +243,11 @@ namespace Platformer.Mechanics
                 if (velocity.y > 0)
                 {
                     velocity.y = velocity.y * model.jumpDeceleration;
-                    Debug.Log($"Stop jump early at time: {Time.time}, velocity reduced to: {velocity.y}");
                 }
             }
 
             if (velocity.y > 0 && Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, whatIsGround))
             {
-                Debug.Log("Head hit ceiling, cancelling upward velocity.");
                 velocity.y = 0;
             }
 
