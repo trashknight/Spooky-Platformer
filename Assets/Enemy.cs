@@ -34,12 +34,31 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("Enemy died of having too much sex!");
 
-        // Die you turd animation
+        // Try to find and notify the pumpkin head
+        var shootProjectile = GetComponent<ShootProjectile>();
+        if (shootProjectile != null)
+        {
+            int id = shootProjectile.SpawnID;
+            foreach (var pumpkin in FindObjectsOfType<PumpkinScript>())
+            {
+                if (pumpkin.spawnId == id)
+                {
+                    pumpkin.wasHitByPlayer = true;
+                    Debug.Log("Pumpkin head notified of ghost death.");
+                    break;
+                }
+            }
+        }
+
+    // Play death VFX
+    if (deathVFX != null && deathVFXTransform != null)
+    {
         GameObject death = Instantiate(deathVFX, deathVFXTransform.position, deathVFXTransform.rotation);
         Destroy(death, deathVFXDuration);
-
-        // Disable the enemy
-        Destroy(gameObject);
     }
+
+    // Destroy the ghost body
+    Destroy(gameObject);
+}
 
 }

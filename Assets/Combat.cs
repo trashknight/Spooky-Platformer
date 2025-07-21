@@ -95,6 +95,8 @@ public class Combat : MonoBehaviour
             PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
             if (pumpkin)
             {
+                pumpkin.wasHitByPlayer = true; // ✅ <--- NEW LINE
+
                 int spawnId = pumpkin.spawnId;
                 foreach (var pumpkineer in FindObjectsOfType<ShootProjectile>())
                 {
@@ -103,6 +105,7 @@ public class Combat : MonoBehaviour
                         pumpkineer.RespawnPumpkin();
                     }
                 }
+                pumpkin.wasHitByPlayer = true;
             }
 
             Enemy e = enemy.GetComponent<Enemy>();
