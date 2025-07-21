@@ -13,6 +13,8 @@ TagManager:
   - Bottle
   - GameplayCanvas
   - InitialSpawnVFX
+  - Undefined
+  - BottleLandingZone
   layers:
   - Default
   - TransparentFX
