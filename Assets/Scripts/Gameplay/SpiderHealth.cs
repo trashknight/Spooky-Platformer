@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿// [Unchanged usings]
+using UnityEngine;
 using System.Collections;
 using Platformer.Gameplay;      
 using static Platformer.Core.Simulation; 
@@ -26,9 +27,7 @@ public class SpiderHealth : MonoBehaviour
 
     public GameObject bottlePrefab;           
     public float bottleDropSpawnY = 16.0f;    
-    
-    [Range(0f, 1f)] 
-    public float bottleSpawnAscentProgress = 0.5f; 
+    [Range(0f, 1f)] public float bottleSpawnAscentProgress = 0.5f;
 
     public Transform player;                  
     public Animator childAnimator;            
@@ -45,7 +44,7 @@ public class SpiderHealth : MonoBehaviour
             if (child != null)
                 childAnimator = child.GetComponent<Animator>();
         }
-        
+
         if (player == null) Debug.LogWarning("Player Transform not assigned to SpiderHealth! Cannot determine roar direction.");
         if (childAnimator == null) Debug.LogWarning("Child Animator not assigned or found for SpiderHealth! Roar animations may not play.");
         if (neutralSprite == null) Debug.LogWarning("Neutral Sprite not assigned to SpiderHealth! Spider may not revert visually after roar.");
@@ -59,8 +58,16 @@ public class SpiderHealth : MonoBehaviour
         currentHealth -= amount;
         Debug.Log($"Spider took {amount} damage. Current health: {currentHealth}");
 
-        if (hitSound != null)
+        if (hitSound != null && audioSource != null)
             audioSource.PlayOneShot(hitSound);
+
+        // ✅ Also play player bite sound if player and Combat are valid
+        if (player != null)
+        {
+            Combat combat = player.GetComponent<Combat>();
+            if (combat != null && combat.biteAudio != null)
+                audioSource.PlayOneShot(combat.biteAudio);
+        }
 
         if (hitParticles != null && hitEffectPoint != null)
             Instantiate(hitParticles, hitEffectPoint.position, Quaternion.identity);
@@ -103,7 +110,6 @@ public class SpiderHealth : MonoBehaviour
 
     IEnumerator DeathSequence()
     {
-        // ✅ Disable the spider’s damage zone (child object)
         Transform damageZone = transform.Find("DamageCollider");
         if (damageZone != null)
         {
@@ -121,7 +127,7 @@ public class SpiderHealth : MonoBehaviour
         if (player != null)
         {
             Vector3 currentScale = transform.localScale;
-            float originalScaleXAbsolute = Mathf.Abs(currentScale.x); 
+            float originalScaleXAbsolute = Mathf.Abs(currentScale.x);
 
             Debug.Log($"Player X: {player.position.x}, Boss X: {transform.position.x}. Deciding death roar direction.");
 
@@ -137,6 +143,7 @@ public class SpiderHealth : MonoBehaviour
                 childAnimator?.SetTrigger("FinalRoarRight");
                 Debug.Log("Animator trigger FinalRoarRight set.");
             }
+
             transform.localScale = currentScale;
         }
         else
@@ -150,8 +157,17 @@ public class SpiderHealth : MonoBehaviour
         childAnimator?.Update(0f);
         childAnimator.enabled = true;
 
+        // ✅ Play spider death roar
         if (audioSource != null && finalRoarSound != null)
             audioSource.PlayOneShot(finalRoarSound);
+
+        // ✅ Also play player bite sound during final roar
+        if (player != null)
+        {
+            Combat combat = player.GetComponent<Combat>();
+            if (combat != null && combat.biteAudio != null)
+                audioSource.PlayOneShot(combat.biteAudio);
+        }
 
         if (deathParticles != null && hitEffectPoint != null)
             Instantiate(deathParticles, hitEffectPoint.position, Quaternion.identity);
@@ -163,18 +179,18 @@ public class SpiderHealth : MonoBehaviour
 
         if (spriteRenderer != null && neutralSprite != null)
         {
-            spriteRenderer.sprite = neutralSprite; 
+            spriteRenderer.sprite = neutralSprite;
         }
         else if (spriteRenderer != null && bossAttack != null && bossAttack.riseSprite != null)
         {
             spriteRenderer.sprite = bossAttack.riseSprite;
         }
 
-        Vector3 flyTarget = new Vector3(transform.position.x, transform.position.y + 20f, 0); 
+        Vector3 flyTarget = new Vector3(transform.position.x, transform.position.y + 20f, 0);
         Vector3 startAscentPos = transform.position;
         float t = 0f;
         float flyDuration = 1.5f;
-        bool bottleSpawnedDuringAscent = false; 
+        bool bottleSpawnedDuringAscent = false;
 
         while (t < flyDuration)
         {
@@ -187,10 +203,10 @@ public class SpiderHealth : MonoBehaviour
                 {
                     Vector3 bottleSpawnPosition = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
                     Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
-                    bottleSpawnedDuringAscent = true; 
+                    bottleSpawnedDuringAscent = true;
                 }
             }
-            yield return null; 
+            yield return null;
         }
 
         transform.position = flyTarget;
@@ -201,7 +217,7 @@ public class SpiderHealth : MonoBehaviour
             Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
         }
 
-        gameObject.SetActive(false); 
+        gameObject.SetActive(false);
         Debug.Log("Spider GameObject deactivated. Boss fight sequence complete.");
     }
 }
