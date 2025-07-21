@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Platformer.Mechanics;
 
 public class PoisonProjectile : MonoBehaviour
@@ -8,6 +8,8 @@ public class PoisonProjectile : MonoBehaviour
     private Vector2 direction;
 
     public AudioClip poisonHitSound; // Assign in Inspector
+    [Range(0f, 5f)] public float poisonHitVolume = 1.0f;
+
     private AudioSource audioSource;
 
     void Start()
@@ -38,8 +40,20 @@ public class PoisonProjectile : MonoBehaviour
         {
             playerHealth.TakeDamage(1, false);
 
-            if (poisonHitSound != null && audioSource != null)
-                audioSource.PlayOneShot(poisonHitSound);
+            // ✅ Play sound from separate object before destroying this one
+            if (poisonHitSound != null)
+            {
+                GameObject tempAudio = new GameObject("TempPoisonHitSound");
+                tempAudio.transform.position = transform.position;
+
+                AudioSource tempSource = tempAudio.AddComponent<AudioSource>();
+                tempSource.clip = poisonHitSound;
+                tempSource.volume = poisonHitVolume;
+                tempSource.spatialBlend = 0f; // 2D sound
+                tempSource.Play();
+
+                Destroy(tempAudio, poisonHitSound.length);
+            }
 
             Destroy(gameObject);
         }

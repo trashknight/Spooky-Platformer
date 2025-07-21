@@ -109,6 +109,8 @@ MonoBehaviour:
     type: 3}
   vfxDuration: 2
   vfxTransform: {fileID: 6947208921515425746}
+  deathSound: {fileID: 8300000, guid: dffb95e5f79730f4aa92f7b6fc1e6d04, type: 3}
+  deathSoundVolume: 1
 --- !u!114 &7658018958677657243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,6 +127,9 @@ MonoBehaviour:
   deathVFX: {fileID: 0}
   deathVFXDuration: 2
   deathVFXTransform: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: dffb95e5f79730f4aa92f7b6fc1e6d04, type: 3}
+  deathSoundVolume: 0
+  maxSoundDistance: 5
 --- !u!58 &4440237149640336629
 CircleCollider2D:
   m_ObjectHideFlags: 0

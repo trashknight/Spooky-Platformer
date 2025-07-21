@@ -142,6 +142,9 @@ MonoBehaviour:
   deathVFX: {fileID: 179846049146574019, guid: 3ee9ca2e832bbdc47bae0af5fea6f153, type: 3}
   deathVFXDuration: 2
   deathVFXTransform: {fileID: 648801337279322610}
+  deathSound: {fileID: 8300000, guid: 510fd4ec83f01e64ca52cbdaad3dd4e4, type: 3}
+  deathSoundVolume: 3
+  maxSoundDistance: 5
 --- !u!114 &648801337279322606
 MonoBehaviour:
   m_ObjectHideFlags: 0

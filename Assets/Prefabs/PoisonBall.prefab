@@ -140,6 +140,7 @@ MonoBehaviour:
   speed: 5
   lifetime: 5
   poisonHitSound: {fileID: 8300000, guid: 045c77bfe0369f2418c78863f77035dd, type: 3}
+  poisonHitVolume: 0.51
 --- !u!114 &7664936670480288517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,6 +156,7 @@ MonoBehaviour:
   destroyEffect: {fileID: 6324944847854803100, guid: dddda8cd65500e94db6a39b790edc120,
     type: 3}
   destroySound: {fileID: 8300000, guid: 503c4e4be57c79a4daab3e8d150c9822, type: 3}
+  destroySoundVolume: 2.05
 --- !u!82 &3098762945385853820
 AudioSource:
   m_ObjectHideFlags: 0
