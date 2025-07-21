@@ -5,8 +5,8 @@ using Platformer.Gameplay;
 using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
-using TMPro; // Needed for TextMeshProUGUI
-using UnityEngine.SceneManagement; // Needed for SceneManager.LoadScene (keep this one!)
+using TMPro;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.Mechanics
 {
@@ -25,8 +25,8 @@ namespace Platformer.Mechanics
 
         public JumpState jumpState = JumpState.Grounded;
         private bool stopJump;
-        /*internal new*/ public Collider2D collider2d;
-        /*internal new*/ public AudioSource audioSource;
+        public Collider2D collider2d;
+        public AudioSource audioSource;
         public Health health;
         public bool controlEnabled = true;
 
@@ -37,25 +37,28 @@ namespace Platformer.Mechanics
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
 
         public Bounds Bounds => collider2d.bounds;
-        public Combat combat; // FIXED: Changed to public
+        public Combat combat;
 
         public Transform spawnPoint;
-        GameManager gameManager; // Reference to your GameManager
+        GameManager gameManager;
         public GameObject landedVFX;
         public float landedVFXDuration = 2f;
         public Transform landedVFXTransform;
 
-        public GameObject respawnVFX; // ✅ NEW: Reference to dirt particle prefab
+        public GameObject respawnVFX;
 
-        // These are your references to the unique victory screen UI panels/GameObjects
         public GameObject victory1;
         public GameObject victory2;
         public GameObject victory3;
 
-        // References for common UI elements (Token Icon, Vial Count Text, Restart Message Text)
         public TextMeshProUGUI commonVialCountText;
         public TextMeshProUGUI commonRestartMessageText;
-        public GameObject commonTokenIcon; // Reference for the Image GameObject itself
+        public GameObject commonTokenIcon;
+
+        [Header("Ceiling Detection")]
+        public Transform ceilingCheck;
+        public float ceilingCheckRadius = 0.1f;
+        public LayerMask whatIsGround;
 
         void Awake()
         {
@@ -67,12 +70,10 @@ namespace Platformer.Mechanics
             combat = GetComponent<Combat>();
             gameManager = FindObjectOfType<GameManager>();
 
-            // Ensure ALL victory-related UI elements are hidden at the start of the scene.
             if (victory1 != null) victory1.SetActive(false);
             if (victory2 != null) victory2.SetActive(false);
             if (victory3 != null) victory3.SetActive(false);
 
-            // Hide the common UI elements initially as well.
             if (commonVialCountText != null) commonVialCountText.gameObject.SetActive(false);
             if (commonRestartMessageText != null) commonRestartMessageText.gameObject.SetActive(false);
             if (commonTokenIcon != null) commonTokenIcon.SetActive(false);
@@ -127,8 +128,6 @@ namespace Platformer.Mechanics
             int score = gameManager.unsavedScore + gameManager.savedScore;
             int totalVialsInLevel = 60;
 
-            Debug.Log($"Player collected a total of {score} vials. Determining victory screen...");
-
             if (victory1 != null) victory1.SetActive(false);
             if (victory2 != null) victory2.SetActive(false);
             if (victory3 != null) victory3.SetActive(false);
@@ -140,55 +139,17 @@ namespace Platformer.Mechanics
             if (commonVialCountText != null)
             {
                 commonVialCountText.text = $"COLLECTED: {score}/{totalVialsInLevel}";
-                if (score == totalVialsInLevel)
-                {
-                    commonVialCountText.color = Color.yellow;
-                    Debug.Log("Full collection! Vial count text set to yellow.");
-                }
-                else
-                {
-                    commonVialCountText.color = Color.white;
-                    Debug.Log("Partial collection. Vial count text set to default color.");
-                }
-            }
-            else
-            {
-                Debug.LogWarning("Common Vial Count Text not assigned in Inspector!");
+                commonVialCountText.color = score == totalVialsInLevel ? Color.yellow : Color.white;
             }
 
             if (commonRestartMessageText != null)
             {
                 commonRestartMessageText.text = "CLICK ANYWHERE TO RESTART";
             }
-            else
-            {
-                Debug.LogWarning("Common Restart Message Text not assigned in Inspector!");
-            }
 
-            if (score > 46)
-            {
-                if (victory3 != null)
-                {
-                    victory3.SetActive(true);
-                    Debug.Log("Activated Victory Screen 3 (Score > 43)");
-                }
-            }
-            else if (score > 36)
-            {
-                if (victory2 != null)
-                {
-                    victory2.SetActive(true);
-                    Debug.Log("Activated Victory Screen 2 (Score 33-43)");
-                }
-            }
-            else
-            {
-                if (victory1 != null)
-                {
-                    victory1.SetActive(true);
-                    Debug.Log("Activated Victory Screen 1 (Score 0-32)");
-                }
-            }
+            if (score > 46 && victory3 != null) victory3.SetActive(true);
+            else if (score > 36 && victory2 != null) victory2.SetActive(true);
+            else if (victory1 != null) victory1.SetActive(true);
         }
 
         public void LandedVFX()
@@ -247,18 +208,17 @@ namespace Platformer.Mechanics
                 }
             }
 
+            // Cancel jump if we hit our head on the ceiling
+            if (velocity.y > 0 && Physics2D.OverlapCircle(ceilingCheck.position, ceilingCheckRadius, whatIsGround))
+            {
+                velocity.y = 0;
+            }
+
             UpdateFacingDirection();
 
             animator.SetBool("grounded", IsGrounded);
             animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
-            if ((IsGrounded) && ((Mathf.Abs(velocity.x) / maxSpeed) != 0))
-            {
-                walkingParticles.SetActive(true);
-            }
-            else
-            {
-                walkingParticles.SetActive(false);
-            }
+            walkingParticles.SetActive(IsGrounded && Mathf.Abs(velocity.x / maxSpeed) != 0);
 
             targetVelocity = move * maxSpeed;
         }
