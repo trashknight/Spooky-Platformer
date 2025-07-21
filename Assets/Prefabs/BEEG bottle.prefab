@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 8196091185899744121}
   - component: {fileID: 8977600634566797210}
   - component: {fileID: 3890545480617853733}
-  - component: {fileID: -772170843203086079}
   m_Layer: 0
   m_Name: BEEG bottle
   m_TagString: Bottle
@@ -270,16 +269,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-772170843203086079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4753273294444529201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0381386d74316004ab5939b0a97d00c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  landingClip: {fileID: 8300000, guid: 153e0447adea479449c3beb962b26910, type: 3}
