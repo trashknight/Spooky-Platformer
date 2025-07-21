@@ -1,4 +1,4 @@
-// AUTHOR:Garth de Wet (Corrupted Heart)
+﻿// AUTHOR:Garth de Wet (Corrupted Heart)
 // CONTACT:mydeathofme[at]gmail[dot]com
 // FILENAME:Spawner.cs
 // PURPOSE:To allow spawning of different enemy types and different ways to spawn them.
@@ -183,74 +183,43 @@ public class Spawner : MonoBehaviour
     // spawns an enemy based on the enemy level that you selected
     private void spawnEnemy()
     {
-        // To check which enemy prefab to instantiate
-        if (enemyLevel == EnemyLevels.Easy)
+        GameObject enemyToSpawn = null;
+
+        switch (enemyLevel)
         {
-            // Checks to see if there is a gameobject in the easy enemy var
-            if (EasyEnemy != null)
-            {
-                // spawns the enemy
-                GameObject Enemy = (GameObject) Instantiate(EasyEnemy, gameObject.transform.position, Quaternion.identity);
-                // calls a function on the enemy that applies the spawner's ID to the enemy
-                //Enemy.SendMessage("setName", SpawnID);
-            }
-            else
-            {
-                //Shows a debug message if there is no prefab
-                Debug.Log("ERROR: No easy enemy Prefab loaded");
-            }
+            case EnemyLevels.Easy:
+                enemyToSpawn = EasyEnemy;
+                break;
+            case EnemyLevels.Medium:
+                enemyToSpawn = MediumEnemy;
+                break;
+            case EnemyLevels.Hard:
+                enemyToSpawn = HardEnemy;
+                break;
+            case EnemyLevels.Boss:
+                enemyToSpawn = BossEnemy;
+                break;
         }
-        else if (enemyLevel == EnemyLevels.Medium)
+
+        if (enemyToSpawn != null)
         {
-            // Checks to see if there is a gameobject in the medium enemy var
-            if (MediumEnemy != null)
+            GameObject Enemy = Instantiate(enemyToSpawn, transform.position, Quaternion.identity);
+
+            // ✨ Ensure it renders in front of the gravestone
+            SpriteRenderer sr = Enemy.GetComponent<SpriteRenderer>();
+            if (sr != null)
             {
-                // spawns the enemy
-                GameObject Enemy = (GameObject) Instantiate(MediumEnemy, gameObject.transform.position, Quaternion.identity);
-                // calls a function on the enemy that applies the spawner's ID to the enemy
-                //Enemy.SendMessage("setName", SpawnID);
+                sr.sortingLayerName = "Ground";
+                sr.sortingOrder = 2; // Higher than the gravestone's 1
             }
-            else
-            {
-                //Shows a debug message if there is no prefab
-                Debug.Log("ERROR: No medium enemy Prefab loaded");
-            }
+
+            numEnemy++;
+            spawnedEnemy++;
         }
-        else if (enemyLevel == EnemyLevels.Hard)
+        else
         {
-            // Checks to see if there is a gameobject in the hard enemy var
-            if (HardEnemy != null)
-            {
-                // spawns the enemy
-                GameObject Enemy = (GameObject) Instantiate(HardEnemy, gameObject.transform.position, Quaternion.identity);
-                // calls a function on the enemy that applies the spawner's ID to the enemy
-                //Enemy.SendMessage("setName", SpawnID);
-            }
-            else
-            {
-                //Shows a debug message if there is no prefab
-                Debug.Log("ERROR: No hard enemy Prefab loaded");
-            }
+            Debug.LogError("No enemy prefab assigned for level: " + enemyLevel);
         }
-        else if (enemyLevel == EnemyLevels.Boss)
-        {
-            // Checks to see if there is a gameobject in the boss enemy var
-            if (BossEnemy != null)
-            {
-                // spawns the enemy
-                GameObject Enemy = (GameObject) Instantiate(BossEnemy, gameObject.transform.position, Quaternion.identity);
-                // calls a function on the enemy that applies the spawner's ID to the enemy
-                //Enemy.SendMessage("setName", SpawnID);
-            }
-            else
-            {
-                //Shows a debug message if there is no prefab
-                Debug.Log("ERROR: No boss enemy Prefab loaded");
-            }
-        }
-        // Increase the total number of enemies spawned and the number of spawned enemies
-        numEnemy++;
-        spawnedEnemy++;
     }
     // Call this function from the enemy when it "dies" to remove an enemy count
     public void killEnemy(int sID)
