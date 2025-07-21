@@ -282,4 +282,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0381386d74316004ab5939b0a97d00c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  landingClip: {fileID: 8300000, guid: bc166b3770fcb2b4ca584cf524d5c25c, type: 3}
+  landingClip: {fileID: 8300000, guid: 153e0447adea479449c3beb962b26910, type: 3}

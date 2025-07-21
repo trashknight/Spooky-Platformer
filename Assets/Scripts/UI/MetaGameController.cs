@@ -25,6 +25,7 @@ namespace Platformer.UI
 
         public AudioSource sfxAudioSource;
         public AudioClip clickSound;
+        public AudioSource musicAudioSource;
 
 #if UNITY_STANDALONE_WIN
         [DllImport("user32.dll")] private static extern System.IntPtr GetActiveWindow();
@@ -33,6 +34,7 @@ namespace Platformer.UI
 #endif
 
         bool initialMenuShown = false;
+        bool shouldPlayPauseClick = false;
 
         void Awake()
         {
@@ -142,6 +144,14 @@ namespace Platformer.UI
         {
             Debug.Log($"MetaGameController:_ToggleMainMenu called with show={show}. Current Time.timeScale: {Time.timeScale}.");
 
+            if (musicAudioSource != null)
+            {
+                if (show)
+                    musicAudioSource.Pause();
+                else
+                    musicAudioSource.UnPause();
+            }
+
             if (show)
             {
                 Time.timeScale = 0;
@@ -171,6 +181,9 @@ namespace Platformer.UI
                     if (i != null)
                         i.gameObject.SetActive(true);
                 }
+
+                // Enable pause click sound again after exiting menu
+                shouldPlayPauseClick = true;
             }
 
             this.showMainCanvas = show;
@@ -185,10 +198,11 @@ namespace Platformer.UI
                 {
                     if (model != null && model.player != null && model.player.controlEnabled)
                     {
-                        if (sfxAudioSource != null && clickSound != null)
+                        if (shouldPlayPauseClick && sfxAudioSource != null && clickSound != null)
                             sfxAudioSource.PlayOneShot(clickSound);
 
                         ToggleMainMenu(show: !showMainCanvas);
+                        shouldPlayPauseClick = false;
                     }
                     else
                     {

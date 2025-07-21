@@ -21,7 +21,7 @@ namespace Platformer.Gameplay
 
                 if (player.audioSource && player.landedAudio)
                 {
-                    player.audioSource.PlayOneShot(player.landedAudio);
+                    player.audioSource.PlayOneShot(player.landedAudio, 0.5f);
                     Debug.Log("Played proper landedAudio!");
                 }
                 else
