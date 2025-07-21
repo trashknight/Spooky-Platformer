@@ -2,6 +2,8 @@
 using Platformer.Mechanics;
 using Platformer.Model;
 using UnityEngine;
+using Cinemachine;
+using System.Collections;
 
 namespace Platformer.Gameplay
 {
@@ -68,7 +70,6 @@ namespace Platformer.Gameplay
 
             if (particleSpawnPoint == null)
             {
-                // Try to find the tagged fallback VFX point in the scene
                 GameObject taggedVFX = GameObject.FindGameObjectWithTag("InitialSpawnVFX");
                 if (taggedVFX != null)
                 {
@@ -81,6 +82,15 @@ namespace Platformer.Gameplay
                     Debug.Log("PlayerSpawn: No tagged VFX fallback found. Using spawnPoint for particle.");
                 }
             }
+
+            // --- Disable camera damping temporarily ---
+            CinemachineVirtualCamera vcam = model.virtualCamera;
+            var transposer = vcam.GetCinemachineComponent<CinemachineFramingTransposer>();
+            float originalXDamping = transposer.m_XDamping;
+            float originalYDamping = transposer.m_YDamping;
+
+            transposer.m_XDamping = 0f;
+            transposer.m_YDamping = 0f;
 
             // --- Execute Spawn ---
             combat.attackEnabled = false;
@@ -107,8 +117,19 @@ namespace Platformer.Gameplay
             model.virtualCamera.m_Follow = player.transform;
             model.virtualCamera.m_LookAt = player.transform;
 
+            // --- Re-enable damping after short delay ---
+            player.StartCoroutine(RestoreCameraDamping(transposer, originalXDamping, originalYDamping, 0.1f));
+
             combat.FadeInAfterRespawn(0.05f);
             Simulation.Schedule<EnablePlayerInput>(2.1f);
+        }
+
+        private System.Collections.IEnumerator RestoreCameraDamping(CinemachineFramingTransposer transposer, float xDamp, float yDamp, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            transposer.m_XDamping = xDamp;
+            transposer.m_YDamping = yDamp;
+            Debug.Log("Camera damping restored.");
         }
     }
 }
