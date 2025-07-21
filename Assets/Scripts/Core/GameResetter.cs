@@ -69,10 +69,6 @@ namespace Platformer.Core
                 GameManager.Instance.collectedThisRun.Clear();
             }
 
-            var music = GameObject.FindObjectOfType<PersistentMusic>();
-            if (music != null)
-                Destroy(music.gameObject);
-
             CleanUpDynamicObjects();
 
             EventSystem currentEventSystemBeforeReload = FindObjectOfType<EventSystem>();
@@ -112,6 +108,11 @@ namespace Platformer.Core
             {
                 yield return new WaitForSeconds(fadeDuration);
             }
+
+            // Music is now destroyed after fade completes
+            var music = GameObject.FindObjectOfType<PersistentMusic>();
+            if (music != null)
+                Destroy(music.gameObject);
 
             if (MetaGameController.Instance != null)
                 Destroy(MetaGameController.Instance.gameObject);
