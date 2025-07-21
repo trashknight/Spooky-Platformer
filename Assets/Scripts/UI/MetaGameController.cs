@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using Platformer.Core;
 
+#if UNITY_STANDALONE_WIN
+using System.Runtime.InteropServices;
+#endif
+
 namespace Platformer.UI
 {
     public class MetaGameController : MonoBehaviour
@@ -16,6 +20,10 @@ namespace Platformer.UI
         public Canvas[] gamePlayCanvasii;
         public GameController gameController;
 
+        public AudioClip clickSFX;
+        private AudioSource audioSource;
+        private bool initialized = false;
+
         GameManager gameManager;
         public bool showMainCanvas;
 
@@ -23,40 +31,33 @@ namespace Platformer.UI
         {
             if (Instance != null && Instance != this)
             {
-                Debug.LogWarning("MetaGameController.Awake(): Duplicate instance found, destroying this one. (Normal for persistent singletons)", this);
                 Destroy(gameObject);
+                return;
             }
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-                Debug.Log("MetaGameController.Awake(): Singleton instance set and will persist.");
-            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Debug.Log("MetaGameController.Awake(): Singleton instance set.");
+
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+                audioSource = gameObject.AddComponent<AudioSource>();
 
             gameManager = GameManager.Instance;
             if (gameManager == null)
-                Debug.LogError("MetaGameController.Awake(): GameManager instance not found! This is critical.");
+                Debug.LogError("MetaGameController.Awake(): GameManager not found!");
 
-            if (gameManager != null)
-            {
-                this.showMainCanvas = gameManager.showMenu;
-                Debug.Log($"MetaGameController.Awake(): Initializing showMainCanvas from GameManager.showMenu: {this.showMainCanvas}");
-            }
-            else
-            {
-                this.showMainCanvas = true;
-            }
+            showMainCanvas = gameManager != null ? gameManager.showMenu : true;
 
-            if (this.showMainCanvas)
+            if (showMainCanvas)
             {
                 Time.timeScale = 0;
-                Debug.Log("MetaGameController.Awake(): Setting Time.timeScale to 0 because showMainCanvas is true (initial/reset menu state).");
+                Debug.Log("MetaGameController.Awake(): Game starts paused.");
             }
         }
 
         void OnEnable()
         {
-            Debug.Log("MetaGameController.OnEnable(): Re-finding scene-specific references and applying UI state.");
             StartCoroutine(FindAndApplyUIDelayed());
         }
 
@@ -65,81 +66,43 @@ namespace Platformer.UI
             yield return null;
 
             mainMenu = FindObjectOfType<MainUIController>();
-            if (mainMenu == null)
-                Debug.LogError("MetaGameController.FindAndApplyUIDelayed: MainUIController (Start Menu Canvas) not found! Check if it's active in scene.");
-
             gameController = GameController.Instance;
-            if (gameController == null)
-                Debug.LogError("MetaGameController.FindAndApplyUIDelayed: GameController instance not found! This is critical.");
 
             GameObject gameCanvasObject = GameObject.FindGameObjectWithTag("GameplayCanvas");
             if (gameCanvasObject != null)
             {
                 Canvas mainGameCanvas = gameCanvasObject.GetComponent<Canvas>();
-                if (mainGameCanvas != null)
-                {
-                    gamePlayCanvasii = new Canvas[] { mainGameCanvas };
-                    Debug.Log($"MetaGameController.FindAndApplyUIDelayed: Found and assigned 'GameplayCanvas' with tag '{gameCanvasObject.tag}'.");
-                }
-                else
-                {
-                    Debug.LogError("MetaGameController.FindAndApplyUIDelayed: 'GameplayCanvas' GameObject found but has no Canvas component!");
-                    gamePlayCanvasii = new Canvas[0];
-                }
+                gamePlayCanvasii = mainGameCanvas != null ? new Canvas[] { mainGameCanvas } : new Canvas[0];
             }
             else
             {
-                Debug.LogWarning("MetaGameController.FindAndApplyUIDelayed: 'GameplayCanvas' with tag 'GameplayCanvas' not found.");
                 gamePlayCanvasii = new Canvas[0];
             }
 
-            if (gameManager != null)
-            {
-                this.showMainCanvas = gameManager.showMenu;
-                Debug.Log($"MetaGameController.FindAndApplyUIDelayed(): Re-read showMainCanvas from GameManager.showMenu: {this.showMainCanvas} after delay.");
-            }
-            else
-            {
-                this.showMainCanvas = true;
-            }
-
-            Debug.Log($"MetaGameController.FindAndApplyUIDelayed(): Applying UI state based on showMainCanvas={this.showMainCanvas}.");
-            _ToggleMainMenu(this.showMainCanvas);
+            showMainCanvas = gameManager != null ? gameManager.showMenu : true;
+            _ToggleMainMenu(showMainCanvas, playSound: false); // Don't play sound during init
+            initialized = true;
         }
 
         public void ToggleMainMenu(bool show)
         {
-            Debug.Log($"MetaGameController: ToggleMainMenu called. Desired show={show}, current showMainCanvas={this.showMainCanvas}");
-            if (this.showMainCanvas != show)
+            if (this.showMainCanvas == show)
             {
-                _ToggleMainMenu(show);
-                gameManager.showMenu = show;
-                Debug.Log($"MetaGameController: ToggleMainMenu: State changed. New showMainCanvas={this.showMainCanvas}. GameManager.showMenu={gameManager.showMenu}.");
+                Debug.Log("MetaGameController: ToggleMainMenu skipped (already in desired state).");
+                return;
             }
-            else
-            {
-                Debug.Log("MetaGameController: ToggleMainMenu: State not changing, already in desired state.");
-            }
+
+            _ToggleMainMenu(show, playSound: true);
+            if (gameManager != null) gameManager.showMenu = show;
         }
 
-        void _ToggleMainMenu(bool show)
+        void _ToggleMainMenu(bool show, bool playSound)
         {
-            Debug.Log($"MetaGameController:_ToggleMainMenu called with show={show}. Current Time.timeScale: {Time.timeScale}.");
-
             if (show)
             {
                 Time.timeScale = 0;
-
-                if (mainMenu != null)
-                    mainMenu.gameObject.SetActive(true);
-
-                foreach (var i in gamePlayCanvasii)
-                {
-                    if (i != null)
-                        i.gameObject.SetActive(false);
-                }
-
-                // ✅ Fix: Reset pointer state so Play button highlights without needing a click
+                if (mainMenu != null) mainMenu.gameObject.SetActive(true);
+                foreach (var c in gamePlayCanvasii) if (c != null) c.gameObject.SetActive(false);
                 EventSystem.current.SetSelectedGameObject(null);
                 Cursor.visible = false;
                 Cursor.visible = true;
@@ -147,15 +110,14 @@ namespace Platformer.UI
             else
             {
                 Time.timeScale = 1;
+                if (mainMenu != null) mainMenu.gameObject.SetActive(false);
+                foreach (var c in gamePlayCanvasii) if (c != null) c.gameObject.SetActive(true);
+            }
 
-                if (mainMenu != null)
-                    mainMenu.gameObject.SetActive(false);
-
-                foreach (var i in gamePlayCanvasii)
-                {
-                    if (i != null)
-                        i.gameObject.SetActive(true);
-                }
+            if (playSound && initialized && clickSFX != null)
+            {
+                Debug.Log("MetaGameController: Playing click sound.");
+                audioSource.PlayOneShot(clickSFX);
             }
 
             this.showMainCanvas = show;
@@ -163,18 +125,32 @@ namespace Platformer.UI
 
         void Update()
         {
-            if (Input.GetButtonDown("Menu"))
+            var model = Simulation.GetModel<Platformer.Model.PlatformerModel>();
+            if (Input.GetMouseButtonDown(0))
             {
-                var model = Simulation.GetModel<Platformer.Model.PlatformerModel>();
                 if (model != null && model.player != null && model.player.controlEnabled)
                 {
-                    ToggleMainMenu(show: !showMainCanvas);
+                    ToggleMainMenu(!showMainCanvas);
                 }
                 else
                 {
-                    Debug.Log("Pause input ignored: player control is currently disabled.");
+                    Debug.Log("Click ignored: player has no control.");
                 }
             }
+
+#if UNITY_STANDALONE_WIN
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                var hwnd = GetActiveWindow();
+                ShowWindow(hwnd, SW_MINIMIZE);
+            }
+#endif
         }
+
+#if UNITY_STANDALONE_WIN
+        [DllImport("user32.dll")] private static extern System.IntPtr GetActiveWindow();
+        [DllImport("user32.dll")] private static extern bool ShowWindow(System.IntPtr hWnd, int nCmdShow);
+        private const int SW_MINIMIZE = 6;
+#endif
     }
 }
