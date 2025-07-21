@@ -107,8 +107,16 @@ namespace Platformer.Gameplay
             player.collider2d.enabled = true;
             player.controlEnabled = false;
 
-            if (!GameManager.Instance.showMenu && player.audioSource && player.respawnAudio)
-                player.audioSource.PlayOneShot(player.respawnAudio);
+            // --- Delayed dirt sound effect ---
+            if (player.audioSource)
+            {
+                if (!player.hasSpawnedOnce && player.firstSpawnAudio != null)
+                    player.StartCoroutine(PlaySpawnSoundDelayed(player.firstSpawnAudio, 0.1f));
+                else if (player.respawnAudio != null)
+                    player.StartCoroutine(PlaySpawnSoundDelayed(player.respawnAudio, 0.1f));
+
+                player.hasSpawnedOnce = true;
+            }
 
             player.health.Reset();
             combat.facingRight = true;
@@ -124,12 +132,23 @@ namespace Platformer.Gameplay
             Simulation.Schedule<EnablePlayerInput>(2.1f);
         }
 
-        private System.Collections.IEnumerator RestoreCameraDamping(CinemachineFramingTransposer transposer, float xDamp, float yDamp, float delay)
+        private IEnumerator RestoreCameraDamping(CinemachineFramingTransposer transposer, float xDamp, float yDamp, float delay)
         {
             yield return new WaitForSeconds(delay);
             transposer.m_XDamping = xDamp;
             transposer.m_YDamping = yDamp;
             Debug.Log("Camera damping restored.");
+        }
+
+        private IEnumerator PlaySpawnSoundDelayed(AudioClip clip, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            var player = model.player;
+            if (player != null && player.audioSource && clip != null)
+            {
+                player.audioSource.PlayOneShot(clip);
+                Debug.Log("Spawn sound played: " + clip.name);
+            }
         }
     }
 }

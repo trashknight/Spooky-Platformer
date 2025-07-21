@@ -94,6 +94,7 @@ namespace Platformer.Mechanics
                     if (animator != null)
                         animator.SetTrigger("hurt");
 
+                    // ✅ Play sound ONLY if the player is still alive
                     if (audiosrc != null && player.ouchAudio != null)
                         audiosrc.PlayOneShot(player.ouchAudio);
                 }

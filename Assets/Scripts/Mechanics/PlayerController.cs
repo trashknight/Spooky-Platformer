@@ -17,6 +17,10 @@ namespace Platformer.Mechanics
         public AudioClip ouchAudio;
         public AudioClip landedAudio;
         public AudioClip spawnpointAudio;
+        [Header("Spawn Audio")]
+        public AudioClip firstSpawnAudio; // NEW
+
+        [HideInInspector] public bool hasSpawnedOnce = false; // NEW
 
         public GameObject walkingParticles;
 
