@@ -27,6 +27,7 @@ public class Combat : MonoBehaviour
     PlayerController player;
 
     private bool hasPlayedInitialFade = false;
+    public bool HasAlreadyFaded { get; private set; } = false;
 
     void Awake()
     {
@@ -41,14 +42,6 @@ public class Combat : MonoBehaviour
                 blackoutImage.color = new Color(blackoutImage.color.r, blackoutImage.color.g, blackoutImage.color.b, 1);
                 blackoutSquare.SetActive(true);
             }
-            else
-            {
-                Debug.LogError("Combat.Awake(): Blackout Square missing Image component.");
-            }
-        }
-        else
-        {
-            Debug.LogError("Combat.Awake(): Blackout Square not found.");
         }
     }
 
@@ -140,19 +133,17 @@ public class Combat : MonoBehaviour
 
     public void InitiateFadeAndReload(float duration)
     {
-        Debug.Log("Combat: InitiateFadeAndReload called.");
         StartCoroutine(FadeToBlack(duration));
     }
 
     public IEnumerator FadeToBlack(float duration)
     {
+        HasAlreadyFaded = true;
         yield return StartCoroutine(ReloadSceneCoroutine(duration));
     }
 
     public IEnumerator ReloadSceneCoroutine(float time)
     {
-        Debug.Log("Combat: ReloadSceneCoroutine() called — fade only (no reload).");
-
         if (blackoutSquare != null)
         {
             Image blackoutImage = blackoutSquare.GetComponent<Image>();
@@ -163,10 +154,6 @@ public class Combat : MonoBehaviour
 
             blackoutSquare.SetActive(true);
             yield return StartCoroutine(FadeBlackoutSquare(4));
-        }
-        else
-        {
-            Debug.LogError("Combat: blackoutSquare is null. Cannot fade.");
         }
     }
 
@@ -222,7 +209,6 @@ public class Combat : MonoBehaviour
     {
         if (blackoutSquare == null) yield break;
 
-        // 🛠️ TEMPORARILY raise canvas sorting order above menu
         Canvas blackCanvas = blackoutSquare.GetComponentInParent<Canvas>();
         if (blackCanvas != null)
             blackCanvas.sortingOrder = 999;
@@ -249,7 +235,6 @@ public class Combat : MonoBehaviour
 
         blackoutSquare.SetActive(false);
 
-        // 🔁 Reset canvas sorting order after fade
         if (blackCanvas != null)
             blackCanvas.sortingOrder = 900;
     }

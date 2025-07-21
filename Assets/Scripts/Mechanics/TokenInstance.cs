@@ -32,22 +32,15 @@ namespace Platformer.Mechanics
 
             if (randomAnimationStartTime)
                 frame = Random.Range(0, sprites.Length);
-
-            Debug.Log($"[TokenInstance] Awake(): tokenIndex = {tokenIndex}, GameManager present: {gameManager != null}");
         }
 
         void Start()
         {
-            Debug.Log($"[TokenInstance] Start(): tokenIndex = {tokenIndex}");
-
             if (gameManager != null)
             {
                 bool shouldDestroy = gameManager.ShouldDestroyToken(tokenIndex);
-                Debug.Log($"[TokenInstance] Checking if should destroy token {tokenIndex}: {shouldDestroy}");
-
                 if (shouldDestroy)
                 {
-                    Debug.Log($"[TokenInstance] Destroying token {tokenIndex} on load.");
                     Destroy(gameObject);
                 }
             }
@@ -74,7 +67,6 @@ namespace Platformer.Mechanics
             {
                 gameManager.unsavedScore += 1;
                 gameManager.collectedThisRun.Add(tokenIndex);
-                Debug.Log($"[TokenInstance] Token {tokenIndex} collected and added to collectedThisRun.");
             }
 
             if (tokenCollectAudio != null)
