@@ -61,7 +61,7 @@ public class Combat : MonoBehaviour
 
         if (Time.time >= nextattackTime)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && attackEnabled)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && attackEnabled)
             {
                 animator?.SetTrigger("Sexy Attack 69");
                 nextattackTime = Time.time + 1f / attackRate;
@@ -95,7 +95,7 @@ public class Combat : MonoBehaviour
             PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
             if (pumpkin)
             {
-                pumpkin.wasHitByPlayer = true; // ✅ <--- NEW LINE
+                pumpkin.wasHitByPlayer = true;
 
                 int spawnId = pumpkin.spawnId;
                 foreach (var pumpkineer in FindObjectsOfType<ShootProjectile>())
@@ -105,7 +105,6 @@ public class Combat : MonoBehaviour
                         pumpkineer.RespawnPumpkin();
                     }
                 }
-                pumpkin.wasHitByPlayer = true;
             }
 
             Enemy e = enemy.GetComponent<Enemy>();

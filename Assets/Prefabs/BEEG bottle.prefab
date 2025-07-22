@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 8196091185899744121}
   - component: {fileID: 8977600634566797210}
   - component: {fileID: 3890545480617853733}
+  - component: {fileID: -6326410667178128855}
+  - component: {fileID: -654147758463754117}
   m_Layer: 0
   m_Name: BEEG bottle
   m_TagString: Bottle
@@ -102,7 +104,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0.8
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
@@ -121,7 +123,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.06021118, y: 0.11528134}
+  m_Offset: {x: -0.06021118, y: 0.13553345}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -132,7 +134,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.89746094, y: 1.3402343}
+  m_Size: {x: 0.89746094, y: 1.2997301}
   m_EdgeRadius: 0
 --- !u!114 &8196091185899744121
 MonoBehaviour:
@@ -160,7 +162,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.06124878, y: 0.11490607}
+  m_Offset: {x: -0.06124878, y: 0.13992345}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -171,7 +173,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.97735596, y: 1.3632636}
+  m_Size: {x: 0.97735596, y: 1.3132288}
   m_EdgeRadius: 0
 --- !u!82 &3890545480617853733
 AudioSource:
@@ -269,3 +271,36 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-6326410667178128855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4753273294444529201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bf14cced862a3248a4ee9150eb54a93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  landingSound: {fileID: 8300000, guid: 386969c8237989f41993967d2964f2dd, type: 3}
+  landingDelay: 1.2
+--- !u!114 &-654147758463754117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4753273294444529201}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08212694c0b52c947a8b70194fcea19b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  landingSound: {fileID: 8300000, guid: 386969c8237989f41993967d2964f2dd, type: 3}
+  landingVolume: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  minVelocityToLand: 1
+  hasLanded: 0

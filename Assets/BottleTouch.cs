@@ -10,8 +10,6 @@ public class BottleTouch : MonoBehaviour
 
     private bool hasBeenCollected = false;
 
-    // The hasLanded flag and OnCollisionEnter2D are no longer needed here.
-
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -21,28 +19,33 @@ public class BottleTouch : MonoBehaviour
         }
     }
 
-    // OnCollisionEnter2D method removed - landing is now handled by BottleLandingZone.
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (hasBeenCollected) return;
 
-        // Player collection logic:
-        if (other.CompareTag("Player")) // Assuming player has "Player" tag
+        if (other.CompareTag("Player"))
         {
             hasBeenCollected = true; 
             Debug.Log("Bottle collected by Player! Scheduling Victory Event.");
 
+            // Cancel pending landing sound
+            BottleLandingSound landingSound = GetComponent<BottleLandingSound>();
+            if (landingSound != null)
+            {
+                landingSound.CancelLandingSound();
+            }
+
+            // Play collect sound
             if (collectSound != null && audioSource != null)
             {
                 audioSource.PlayOneShot(collectSound);
             }
             else if (collectSound == null)
             {
-                 Debug.LogWarning("BottleTouch: Collect Sound not assigned.");
+                Debug.LogWarning("BottleTouch: Collect Sound not assigned.");
             }
 
-            // Find an existing VictoryZone in the scene and schedule the victory event
+            // Trigger the victory zone event
             VictoryZone existingVictoryZone = FindObjectOfType<VictoryZone>();
             if (existingVictoryZone != null)
             {
@@ -55,7 +58,7 @@ public class BottleTouch : MonoBehaviour
                 Debug.LogError("BottleTouch: Could not find an existing VictoryZone in scene to schedule event! Victory screen may not activate.");
             }
 
-            // After collection, hide the bottle sprite and disable its colliders/physics for interaction
+            // Visually and physically hide the bottle
             GetComponent<SpriteRenderer>().enabled = false; 
             
             Collider2D[] colliders = GetComponents<Collider2D>();
@@ -69,9 +72,10 @@ public class BottleTouch : MonoBehaviour
             {
                 rb.velocity = Vector2.zero;
                 rb.angularVelocity = 0f;
-                rb.isKinematic = true; // Make it kinematic (stops all physics influence)
+                rb.isKinematic = true;
             }
-            // The bottle GameObject remains in the scene, hidden by the victory canvas.
+
+            // The bottle GameObject remains in the scene, hidden under the victory canvas
         }
     }
 }
