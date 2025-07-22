@@ -227,8 +227,8 @@ namespace Platformer.Mechanics
         {
             Bounds bounds = collider2d.bounds;
             Vector2 origin = new Vector2(bounds.center.x, bounds.max.y + 0.01f);
-            Vector2 size = new Vector2(bounds.size.x * 0.9f, 0.02f);
-            RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, Vector2.up, 0.01f, whatIsGround);
+            Vector2 size = new Vector2(bounds.size.x * 0.95f, 0.05f);
+            RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, Vector2.up, 0.02f, whatIsGround);
             return hit.collider != null;
         }
 

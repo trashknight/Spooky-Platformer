@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8886518891179811900}
   - component: {fileID: 7416406992013056602}
   - component: {fileID: 8747995587229325937}
+  - component: {fileID: 8746366467302986969}
   m_Layer: 9
   m_Name: Gelatinat Enemy
   m_TagString: NoUp
@@ -116,7 +117,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2854252734443321687}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -315,3 +316,57 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!60 &8746366467302986969
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854252734443321687}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.2666667, y: 0.44}
+    newSize: {x: 1.9, y: 0.66}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.37333333, y: -0.16}
+      - {x: 0.42666668, y: -0.16}
+      - {x: 0.58000004, y: -0.13333334}
+      - {x: 0.62, y: -0.11333334}
+      - {x: 0.6333333, y: -0.07333334}
+      - {x: 0.6333333, y: -0.026666667}
+      - {x: 0.61333334, y: -0.02}
+      - {x: 0.31333333, y: 0.053333335}
+      - {x: 0.14666668, y: 0.08}
+      - {x: 0.13333334, y: 0.14666668}
+      - {x: 0.04, y: 0.22}
+      - {x: -0.093333334, y: 0.22}
+      - {x: -0.15333334, y: 0.13333334}
+      - {x: -0.41333336, y: 0.12666667}
+      - {x: -0.61333334, y: 0.19333334}
+      - {x: -0.6333333, y: 0.18}
+      - {x: -0.6333333, y: 0.11333334}
+      - {x: -0.52000004, y: -0.013333334}
+      - {x: -0.44, y: -0.086666666}
+      - {x: -0.34666666, y: -0.08}
+      - {x: -0.28666666, y: -0.13333334}
+      - {x: -0.18666667, y: -0.120000005}
+      - {x: -0.16, y: -0.19333334}
+      - {x: -0.053333335, y: -0.17333333}
+      - {x: 0.006666667, y: -0.22}
+      - {x: 0.06666667, y: -0.22}
+      - {x: 0.11333334, y: -0.18}
+      - {x: 0.21333334, y: -0.18}
+      - {x: 0.32666668, y: -0.13333334}

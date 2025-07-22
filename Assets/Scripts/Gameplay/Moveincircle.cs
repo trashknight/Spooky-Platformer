@@ -5,18 +5,27 @@ public class Moveincircle : MonoBehaviour
     public float RotateSpeed = 5f;
     public float Radius = 0.1f;
 
-    private Vector2 _centre;
     private float _angle;
+    private Vector2 _initialOffset;
 
-    private void Start()
+    void Start()
     {
-        _centre = transform.position;
+        _initialOffset = transform.position;
     }
 
-    private void Update()
+    void Update()
     {
         _angle += RotateSpeed * Time.deltaTime;
+
+        // Always use the initial spawn offset + animation offset
         Vector2 offset = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
-        transform.position = _centre + offset;
+        transform.position = _initialOffset + offset;
+    }
+
+    void OnEnable()
+    {
+        // Re-capture starting offset in case the object was disabled and re-enabled
+        _initialOffset = transform.position;
+        _angle = 0f;
     }
 }
