@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3745168285094550409}
   - component: {fileID: 648801336107078115}
   - component: {fileID: 4059807795736770697}
+  - component: {fileID: 6759565996452741224}
   m_Layer: 9
   m_Name: Skull Enemy 1
   m_TagString: NoUp
@@ -117,15 +118,15 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 648801337279322614}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0062490106, y: -0.016245991}
   serializedVersion: 2
-  m_Radius: 0.42285714
+  m_Radius: 0.3878656
 --- !u!114 &648801337279322609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,3 +319,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!70 &6759565996452741224
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 648801337279322614}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.5914286, y: 0.8457143}
+  m_Direction: 0
