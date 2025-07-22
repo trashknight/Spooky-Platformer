@@ -67,6 +67,7 @@ namespace Platformer.Core
                 GameManager.Instance.showMenu = true;
                 GameManager.Instance.collectedTokenIndices.Clear();
                 GameManager.Instance.collectedThisRun.Clear();
+                GameManager.Instance.activatedCheckpoints.Clear();
             }
 
             CleanUpDynamicObjects();
