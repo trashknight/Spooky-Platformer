@@ -15,6 +15,10 @@ public class BossIntro : MonoBehaviour
     public AudioSource roarAudio;               // Drag in the Audio Source from Spider Idle
     public AudioClip roarClip;                  // Drag in the SpiderRoar.wav
 
+    [Header("Ascent Sound")]
+    public AudioClip ascendSound;               // Drag in ascent audio clip
+    [Range(0f, 1f)] public float ascendVolume = 1f;
+
     public float riseHeight = 5f;               // How far the spider rises
     public float riseDuration = 1.5f;           // How long the rising takes
     public float roarDuration = 2f;             // How long to wait during roar
@@ -56,6 +60,10 @@ public class BossIntro : MonoBehaviour
         // 5. Wait for roar to finish
         yield return new WaitForSeconds(roarDuration);
 
+                // 7. Play ascent sound
+        if (ascendSound != null && roarAudio != null)
+            roarAudio.PlayOneShot(ascendSound, ascendVolume);
+
         // 6. Disable animator, switch to rise sprite
         if (bossAnimator != null)
             bossAnimator.enabled = false;
@@ -63,7 +71,7 @@ public class BossIntro : MonoBehaviour
         if (bossSpriteRenderer != null && spiderRiseSprite != null)
             bossSpriteRenderer.sprite = spiderRiseSprite;
 
-        // 7. Move spider up
+        // 8. Move spider up
         Vector3 startPos = spiderParent.position;
         Vector3 endPos = startPos + Vector3.up * riseHeight;
 
@@ -77,11 +85,11 @@ public class BossIntro : MonoBehaviour
 
         spiderParent.position = endPos;
 
-        // 8. Unfreeze player
+        // 9. Unfreeze player
         if (player != null)
             player.controlEnabled = true;
 
-        // 9. Start attack phase
+        // 10. Start attack phase
         BossAttackBehavior attack = transform.parent.GetComponent<BossAttackBehavior>();
         if (attack != null)
         {

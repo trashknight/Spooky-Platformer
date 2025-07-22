@@ -12,6 +12,9 @@ public class SpiderHealth : MonoBehaviour
 
     public AudioClip hitSound;
     public AudioClip finalRoarSound;
+    public AudioClip riseSound; // 🎵 NEW: For ascent sounds
+    public float riseVolume = 0.6f; // 🔊 Adjust in Inspector
+
     private AudioSource audioSource;
 
     public SpriteRenderer spriteRenderer;
@@ -32,7 +35,6 @@ public class SpiderHealth : MonoBehaviour
     public Transform player;
     public Animator childAnimator;
 
-    // New: Reference to Impulse Source
     public CinemachineImpulseSource impulseSource;
 
     void Start()
@@ -48,10 +50,10 @@ public class SpiderHealth : MonoBehaviour
                 childAnimator = child.GetComponent<Animator>();
         }
 
-        if (player == null) Debug.LogWarning("Player Transform not assigned to SpiderHealth! Cannot determine roar direction.");
-        if (childAnimator == null) Debug.LogWarning("Child Animator not assigned or found for SpiderHealth! Roar animations may not play.");
-        if (neutralSprite == null) Debug.LogWarning("Neutral Sprite not assigned to SpiderHealth! Spider may not revert visually after roar.");
-        if (bottlePrefab == null) Debug.LogWarning("Bottle Prefab not assigned to SpiderHealth! Bottle will not drop.");
+        if (player == null) Debug.LogWarning("SpiderHealth: Player Transform not assigned.");
+        if (childAnimator == null) Debug.LogWarning("SpiderHealth: Child Animator not found.");
+        if (neutralSprite == null) Debug.LogWarning("SpiderHealth: Neutral Sprite not assigned.");
+        if (bottlePrefab == null) Debug.LogWarning("SpiderHealth: Bottle Prefab not assigned.");
     }
 
     public void TakeDamage(int amount)
@@ -61,7 +63,7 @@ public class SpiderHealth : MonoBehaviour
         currentHealth -= amount;
         Debug.Log($"Spider took {amount} damage. Current health: {currentHealth}");
 
-        if (hitSound != null && audioSource != null)
+        if (hitSound != null)
             audioSource.PlayOneShot(hitSound);
 
         if (player != null)
@@ -114,48 +116,42 @@ public class SpiderHealth : MonoBehaviour
     {
         Transform damageZone = transform.Find("DamageCollider");
         if (damageZone != null)
-        {
             damageZone.gameObject.SetActive(false);
-            Debug.Log("DamageCollider disabled during death sequence.");
-        }
 
         if (spriteRenderer != null && !spriteRenderer.enabled)
-        {
             spriteRenderer.enabled = true;
-            Debug.Log("Main sprite renderer re-enabled for death sequence.");
-        }
 
-        // Roar direction logic
+        // Roar direction
         if (player != null)
         {
-            Vector3 currentScale = transform.localScale;
-            float originalScaleX = Mathf.Abs(currentScale.x);
+            Vector3 scale = transform.localScale;
+            float absX = Mathf.Abs(scale.x);
 
             if (player.position.x < transform.position.x)
             {
-                currentScale.x = originalScaleX;
+                scale.x = absX;
                 childAnimator?.SetTrigger("FinalRoarLeft");
             }
             else
             {
-                currentScale.x = -originalScaleX;
+                scale.x = -absX;
                 childAnimator?.SetTrigger("FinalRoarRight");
             }
 
-            transform.localScale = currentScale;
+            transform.localScale = scale;
         }
         else
         {
-            Debug.LogError("Player Transform not assigned. Defaulting to FinalRoarRight.");
-            childAnimator?.SetTrigger("FinalRoarRight");
+            Debug.LogError("SpiderHealth: No player assigned, defaulting to FinalRoarRight.");
             transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            childAnimator?.SetTrigger("FinalRoarRight");
         }
 
         childAnimator?.Rebind();
         childAnimator?.Update(0f);
         childAnimator.enabled = true;
 
-        if (audioSource != null && finalRoarSound != null)
+        if (finalRoarSound != null)
             audioSource.PlayOneShot(finalRoarSound);
 
         if (player != null)
@@ -165,44 +161,48 @@ public class SpiderHealth : MonoBehaviour
                 audioSource.PlayOneShot(combat.biteAudio);
         }
 
-        // ✅ Trigger screen shake
         if (impulseSource != null)
             impulseSource.GenerateImpulse();
 
         if (deathParticles != null && hitEffectPoint != null)
             Instantiate(deathParticles, hitEffectPoint.position, Quaternion.identity);
 
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(1.8f);
+
+        if (riseSound != null)
+            audioSource.PlayOneShot(riseSound, riseVolume);
+
+        yield return new WaitForSeconds(0.2f);
 
         if (childAnimator != null)
             childAnimator.enabled = false;
 
-        if (spriteRenderer != null && neutralSprite != null)
+        if (spriteRenderer != null)
         {
-            spriteRenderer.sprite = neutralSprite;
-        }
-        else if (spriteRenderer != null && bossAttack != null && bossAttack.riseSprite != null)
-        {
-            spriteRenderer.sprite = bossAttack.riseSprite;
+            spriteRenderer.sprite = (neutralSprite != null) ? neutralSprite :
+                                     (bossAttack != null && bossAttack.riseSprite != null) ? bossAttack.riseSprite :
+                                     spriteRenderer.sprite;
+
         }
 
-        Vector3 flyTarget = new Vector3(transform.position.x, transform.position.y + 20f, 0);
-        Vector3 startAscentPos = transform.position;
+        // Final ascent + sound
+        Vector3 flyTarget = transform.position + Vector3.up * 20f;
+        Vector3 start = transform.position;
         float t = 0f;
         float flyDuration = 1.5f;
         bool bottleSpawned = false;
 
         while (t < flyDuration)
         {
-            transform.position = Vector3.Lerp(startAscentPos, flyTarget, t / flyDuration);
+            transform.position = Vector3.Lerp(start, flyTarget, t / flyDuration);
             t += Time.deltaTime;
 
             if (!bottleSpawned && t >= flyDuration * bottleSpawnAscentProgress)
             {
                 if (bottlePrefab != null)
                 {
-                    Vector3 bottleSpawnPosition = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
-                    Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
+                    Vector3 bottlePos = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
+                    Instantiate(bottlePrefab, bottlePos, Quaternion.identity);
                     bottleSpawned = true;
                 }
             }
@@ -214,11 +214,11 @@ public class SpiderHealth : MonoBehaviour
 
         if (!bottleSpawned && bottlePrefab != null)
         {
-            Vector3 bottleSpawnPosition = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
-            Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
+            Vector3 bottlePos = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
+            Instantiate(bottlePrefab, bottlePos, Quaternion.identity);
         }
 
         gameObject.SetActive(false);
-        Debug.Log("Spider GameObject deactivated. Boss fight sequence complete.");
+        Debug.Log("Spider boss fully deactivated.");
     }
 }
