@@ -1,9 +1,9 @@
-﻿// [Unchanged usings]
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
-using Platformer.Gameplay;      
-using static Platformer.Core.Simulation; 
-using Platformer.Mechanics;     
+using Platformer.Gameplay;
+using static Platformer.Core.Simulation;
+using Platformer.Mechanics;
+using Cinemachine;
 
 public class SpiderHealth : MonoBehaviour
 {
@@ -14,23 +14,26 @@ public class SpiderHealth : MonoBehaviour
     public AudioClip finalRoarSound;
     private AudioSource audioSource;
 
-    public SpriteRenderer spriteRenderer;     
+    public SpriteRenderer spriteRenderer;
     public Sprite hitFlashSprite;
-    public Sprite neutralSprite;              
+    public Sprite neutralSprite;
     public float flashDuration = 0.1f;
 
     public GameObject hitParticles;
     public GameObject deathParticles;
     public Transform hitEffectPoint;
 
-    private BossAttackBehavior bossAttack;    
+    private BossAttackBehavior bossAttack;
 
-    public GameObject bottlePrefab;           
-    public float bottleDropSpawnY = 16.0f;    
+    public GameObject bottlePrefab;
+    public float bottleDropSpawnY = 16.0f;
     [Range(0f, 1f)] public float bottleSpawnAscentProgress = 0.5f;
 
-    public Transform player;                  
-    public Animator childAnimator;            
+    public Transform player;
+    public Animator childAnimator;
+
+    // New: Reference to Impulse Source
+    public CinemachineImpulseSource impulseSource;
 
     void Start()
     {
@@ -61,7 +64,6 @@ public class SpiderHealth : MonoBehaviour
         if (hitSound != null && audioSource != null)
             audioSource.PlayOneShot(hitSound);
 
-        // ✅ Also play player bite sound if player and Combat are valid
         if (player != null)
         {
             Combat combat = player.GetComponent<Combat>();
@@ -127,21 +129,17 @@ public class SpiderHealth : MonoBehaviour
         if (player != null)
         {
             Vector3 currentScale = transform.localScale;
-            float originalScaleXAbsolute = Mathf.Abs(currentScale.x);
-
-            Debug.Log($"Player X: {player.position.x}, Boss X: {transform.position.x}. Deciding death roar direction.");
+            float originalScaleX = Mathf.Abs(currentScale.x);
 
             if (player.position.x < transform.position.x)
             {
-                currentScale.x = originalScaleXAbsolute;
+                currentScale.x = originalScaleX;
                 childAnimator?.SetTrigger("FinalRoarLeft");
-                Debug.Log("Animator trigger FinalRoarLeft set.");
             }
             else
             {
-                currentScale.x = -originalScaleXAbsolute;
+                currentScale.x = -originalScaleX;
                 childAnimator?.SetTrigger("FinalRoarRight");
-                Debug.Log("Animator trigger FinalRoarRight set.");
             }
 
             transform.localScale = currentScale;
@@ -157,17 +155,19 @@ public class SpiderHealth : MonoBehaviour
         childAnimator?.Update(0f);
         childAnimator.enabled = true;
 
-        // ✅ Play spider death roar
         if (audioSource != null && finalRoarSound != null)
             audioSource.PlayOneShot(finalRoarSound);
 
-        // ✅ Also play player bite sound during final roar
         if (player != null)
         {
             Combat combat = player.GetComponent<Combat>();
             if (combat != null && combat.biteAudio != null)
                 audioSource.PlayOneShot(combat.biteAudio);
         }
+
+        // ✅ Trigger screen shake
+        if (impulseSource != null)
+            impulseSource.GenerateImpulse();
 
         if (deathParticles != null && hitEffectPoint != null)
             Instantiate(deathParticles, hitEffectPoint.position, Quaternion.identity);
@@ -190,28 +190,29 @@ public class SpiderHealth : MonoBehaviour
         Vector3 startAscentPos = transform.position;
         float t = 0f;
         float flyDuration = 1.5f;
-        bool bottleSpawnedDuringAscent = false;
+        bool bottleSpawned = false;
 
         while (t < flyDuration)
         {
             transform.position = Vector3.Lerp(startAscentPos, flyTarget, t / flyDuration);
             t += Time.deltaTime;
 
-            if (!bottleSpawnedDuringAscent && t >= flyDuration * bottleSpawnAscentProgress)
+            if (!bottleSpawned && t >= flyDuration * bottleSpawnAscentProgress)
             {
                 if (bottlePrefab != null)
                 {
                     Vector3 bottleSpawnPosition = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
                     Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
-                    bottleSpawnedDuringAscent = true;
+                    bottleSpawned = true;
                 }
             }
+
             yield return null;
         }
 
         transform.position = flyTarget;
 
-        if (!bottleSpawnedDuringAscent && bottlePrefab != null)
+        if (!bottleSpawned && bottlePrefab != null)
         {
             Vector3 bottleSpawnPosition = new Vector3(transform.position.x, bottleDropSpawnY, transform.position.z);
             Instantiate(bottlePrefab, bottleSpawnPosition, Quaternion.identity);
