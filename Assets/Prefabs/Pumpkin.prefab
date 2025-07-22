@@ -110,7 +110,7 @@ MonoBehaviour:
   vfxDuration: 2
   vfxTransform: {fileID: 6947208921515425746}
   deathSound: {fileID: 8300000, guid: dffb95e5f79730f4aa92f7b6fc1e6d04, type: 3}
-  deathSoundVolume: 1
+  deathSoundVolume: 0.8
 --- !u!114 &7658018958677657243
 MonoBehaviour:
   m_ObjectHideFlags: 0

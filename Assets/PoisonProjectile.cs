@@ -36,12 +36,12 @@ public class PoisonProjectile : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         Health playerHealth = collision.GetComponent<Health>();
-        if (playerHealth != null)
+        if (playerHealth != null && playerHealth.IsAlive)
         {
             playerHealth.TakeDamage(1, false);
 
-            // ✅ Play sound from separate object before destroying this one
-            if (poisonHitSound != null)
+            // Only play sound if still alive after damage
+            if (playerHealth.IsAlive && poisonHitSound != null)
             {
                 GameObject tempAudio = new GameObject("TempPoisonHitSound");
                 tempAudio.transform.position = transform.position;
