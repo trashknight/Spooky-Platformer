@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Platformer.Mechanics;
-using Platformer.Core; // Needed for GameResetter
+using Platformer.Core;
 
 public class Combat : MonoBehaviour
 {
@@ -90,8 +90,18 @@ public class Combat : MonoBehaviour
             hitEnemies = new Collider2D[0];
         }
 
+        Debug.Log($"[Combat] EnemiesInZones count: {EnemyImmunityZone.EnemiesInZones.Count}");
+
         foreach (Collider2D enemy in hitEnemies)
         {
+            if (EnemyImmunityZone.EnemiesInZones.Contains(enemy))
+            {
+                Debug.Log($"[Combat] Enemy {enemy.name} is inside an immunity zone. Skipping damage.");
+                continue;
+            }
+
+            Debug.Log($"[Combat] Enemy {enemy.name} is vulnerable. Applying damage.");
+
             PumpkinScript pumpkin = enemy.GetComponent<PumpkinScript>();
             if (pumpkin)
             {
