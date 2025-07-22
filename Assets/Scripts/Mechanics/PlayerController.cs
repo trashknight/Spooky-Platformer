@@ -157,7 +157,6 @@ namespace Platformer.Mechanics
                 }
             }
 
-            // NEW: Stop upward movement when hitting a ceiling
             if (velocity.y > 0 && IsTouchingCeiling())
             {
                 velocity.y = 0;
@@ -203,11 +202,24 @@ namespace Platformer.Mechanics
             {
                 spriteRenderer.flipX = false;
                 combat.facingRight = true;
+                FlipColliderOffset(true);
             }
             else if (move.x < -0.01f)
             {
                 spriteRenderer.flipX = true;
                 combat.facingRight = false;
+                FlipColliderOffset(false);
+            }
+        }
+
+        void FlipColliderOffset(bool facingRight)
+        {
+            BoxCollider2D box = collider2d as BoxCollider2D;
+            if (box != null)
+            {
+                Vector2 offset = box.offset;
+                offset.x = facingRight ? Mathf.Abs(offset.x) : -Mathf.Abs(offset.x);
+                box.offset = offset;
             }
         }
 
@@ -216,7 +228,6 @@ namespace Platformer.Mechanics
             Bounds bounds = collider2d.bounds;
             Vector2 origin = new Vector2(bounds.center.x, bounds.max.y + 0.01f);
             Vector2 size = new Vector2(bounds.size.x * 0.9f, 0.02f);
-
             RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, Vector2.up, 0.01f, whatIsGround);
             return hit.collider != null;
         }
