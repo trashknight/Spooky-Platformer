@@ -265,8 +265,8 @@ namespace Platformer.Mechanics
             if (commonRestartMessageText != null)
                 commonRestartMessageText.text = "CLICK ANYWHERE TO RESTART";
 
-            if (score > 46 && victory3 != null) victory3.SetActive(true);
-            else if (score > 36 && victory2 != null) victory2.SetActive(true);
+            if (score > 49 && victory3 != null) victory3.SetActive(true);
+            else if (score > 39 && victory2 != null) victory2.SetActive(true);
             else if (victory1 != null) victory1.SetActive(true);
         }
 
